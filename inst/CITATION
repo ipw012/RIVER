@@ -1,0 +1,15 @@
+citHeader("To cite RIVERpkg in publications use:")
+
+citEntry(entry = "Manual",
+  title        = "R package for {RIVER}",
+  author       = personList(as.person("Yungil Kim"), as.person("Farhan N. Damani"), as.person("Alexis Battle")),
+  year         = "2017",
+  note         = "R package version 0.1.0",
+  url          = "https://github.com/ipw012/RIVERpkg",
+  textVersion  =
+paste("Yungil Kim, Farhan N. Damani, and Alexis Battle (2017).",
+        "RIVERpkg: R package for RIVER (RNA-Informed Variant Effect on Regulation).",
+        "R package version 0.1.0.",
+        "https://github.com/ipw012/RIVERpkg.")
+
+)
