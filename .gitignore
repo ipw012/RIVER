@@ -3,5 +3,5 @@
 .gitignore
 .Rhistory
 .RData
-RIVERpkg.Rproj
-inst/doc
+*.Rproj
+inst/doc/
