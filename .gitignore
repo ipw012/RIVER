@@ -1,7 +1,6 @@
 .Rproj.user
 .Rbuildignore
-.gitignore
 .Rhistory
 .RData
-*.Rproj
+RIVERpkg.Rproj
 inst/doc/
