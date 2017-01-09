@@ -36,8 +36,8 @@ A BibTeX entry for LaTeX users is
 	year = {2016},
 	doi = {10.1101/074443},
 	publisher = {Cold Spring Harbor Labs Journals},
-	journal = {bioRxiv}
-	URL = {http://biorxiv.org/content/early/2016/09/09/074443},
+	journal = {bioRxiv},
+	URL = {http://biorxiv.org/content/early/2016/09/09/074443}
 }
 
 # Testing

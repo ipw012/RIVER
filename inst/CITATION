@@ -5,7 +5,7 @@ citEntry(entry = "Article",
   author       = personList(as.person("Xin Li"), as.person("Yungil Kim"), as.person("Emily K. Tsang"), as.person("Joe R. Davis"), as.person("Farhan N. Damani"), as.person("Colby Chiang"), as.person("Zachary Zappala"), as.person("Benjamin J. Strober"), as.person("Alexandra J. Scott"), as.person("Andrea Ganna"), as.person("Jason Merker"), as.person("GTEx Consortium"), as.person("Ira M. Hall"), as.person("Alexis Battle")), as.person("Stephen B. Montgomery"),
   year         = "2016",
   url          = "http://biorxiv.org/content/early/2016/09/09/074443",
-  journal      = "bioRxiv"
+  journal      = "bioRxiv",
   textVersion  =
 paste("Xin Li, Yungil Kim, Emily K. Tsang, Joe R. Davis, Farhan N. Damani, Colby Chiang, Zachary Zappala, Benjamin J. Strober, Alexandra J. Scott, Andrea Ganna, Jason Merker, GTEx Consortium, Ira M. Hall, Alexis Battle, Stephen B. Montgomery (2016)",
         "The impact of rare variation on gene expression across tissues",
