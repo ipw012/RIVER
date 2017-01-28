@@ -1,3 +1,5 @@
+Status: Travis CI [![Travis-CI Build Status](https://travis-ci.org/ipw012/RIVERpkg.svg?branch=master)](https://travis-ci.org/ipw012/RIVERpkg)
+
 RIVERpkg
 =======
 
