@@ -48,3 +48,22 @@
 #'
 #' @source \url{https://github.com/ipw012/RIVERpkg}
 "simulated_outliers"
+
+#' A list of N2 pairs having same rare variants
+#'
+#' A list of N2 pairs in the simulated data which contains pairs of examples with
+#'         same rare variants. First two columns contain subject ID and targeted
+#'         gene name for 1st individual and next two columns contain subject ID
+#'         and GeneName2 for another.
+#' @format A data frame containing 106 pairs with 106 rows and 4 columns including
+#'         Subject ID and gene name of 1st individual and Subject ID and gene name
+#'         of 2nd individual:
+#'   \describe{
+#'   \item{SubjectID1}{subject IDs for 1st individual from each pair}
+#'   \item{GeneName1}{gene names for 1st individual from each pair}
+#'   \item{SubjectID2}{subject IDs for 2nd individual from each pair}
+#'   \item{GeneName2}{gene names for 2nd individual from each pair}}
+#' @return A simulated N2 pairs in a data.frame format (106 x 4)
+#'
+#' @source \url{https://github.com/ipw012/RIVERpkg}
+"simulated_N2pairs"

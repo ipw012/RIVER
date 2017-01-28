@@ -20,7 +20,8 @@ AUC figure
 \examples{
 G <- simulated_features
 E <- simulated_outliers
-rocstat <- evaRIVER(G, E, pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7),
+P <- simulated_N2pairs
+rocstat <- evaRIVER(G, E, P, pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7),
             nrow=2), costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4), verbose=FALSE)
 plotAUC(rocstat)
 

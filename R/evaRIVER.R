@@ -10,6 +10,10 @@
 #'         per row.
 #' @param E Expression outliers in the data frame which contains subject IDs,
 #'         gene symbols, and outlier status of each instance per row.
+#' @param P A list of N2 pairs in the data frame which contains pairs of
+#'         examples with same rare variants. First two columns contain
+#'         SubjectID1 and GeneName1 for one and next two columns contain
+#'         SubjectID2 and GeneName2 for another.
 #' @param pseudoc Pseudo count.
 #' @param theta_init Initial values of theta.
 #' @param costs Candidate penalty parameter values for L2-regularized logistic
@@ -30,38 +34,40 @@
 #' @examples
 #' G <- simulated_features
 #' E <- simulated_outliers
-#' rocSTAT <- evaRIVER(G, E, verbose=TRUE)
+#' P <- simulated_N2pairs
+#' rocSTAT <- evaRIVER(G, E, P, verbose=TRUE)
 #'
 #' @export
 
-evaRIVER <- function(G, E, pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7), nrow=2),
+evaRIVER <- function(G, E, P, pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7), nrow=2),
                      costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4), verbose=FALSE) {
-  ## Search N2 pairs
+  ## Extract indices of N2 pairs (Revised)
   ## (a list of two individuals having same rare SNVs within 10Kb of TSS)
-  grp.cols <- names(G)[2:ncol(G)]
-  dots <- lapply(grp.cols, as.symbol)
-  K = data.frame(G %>% mutate(rnum = row_number()) %>% group_by_(.dots = dots)
-                 %>% arrange() %>% mutate(number=n()) %>% filter(number == 2))
-  dups <- matrix(K$rnum, length(K$rnum)/2, 2, byrow = TRUE)
+  G2 = data.frame(G %>% mutate(rnum=row_number()))
+  temp_N2pairs = P
+  colnames(temp_N2pairs) = rep(c("SubjectID","GeneName"),times=2)
+  dups = cbind(left_join(temp_N2pairs[,1:2], G2, by=c("SubjectID","GeneName"))[,"rnum"],
+                left_join(temp_N2pairs[,3:4], G2, by=c("SubjectID","GeneName"))[,"rnum"])
 
   E_disc = as.numeric(E[,"Outlier"])
 
-  basic_data = cbind(E_disc, G)
-  rp = sample.int(dim(basic_data)[1])
+  ## Split data into trainig and test ones
+  train_inds = setdiff(sample.int(nrow(G)), union(dups[,1],dups[,2]))
+  test_inds = as.integer(rbind(dups[,1],dups[,2]))
+  test_inds_rev = as.integer(rbind(dups[,2],dups[,1]))
 
-  ## Split data into trainig and test dataset
-  train_inds = setdiff(rp, union(dups[,1], dups[,2]))
-  test_inds = union(dups[,1], dups[,2])
-
-  g_all <- scale(as.matrix(G[,3:ncol(G)]))
+  ## Standardization
+  g_all = as.matrix(G[,3:ncol(G)])
+  mean_col_g = apply(g_all,2,mean)
+  sd_col_g = apply(g_all,2,sd)
+  g_all <- scale(g_all, center=mean_col_g, scale=sd_col_g)
 
   ## Generate training data by holding out N2 pairs
   g_trng <- scale(as.matrix(G[train_inds,3:ncol(G)]),
-                  center=colMeans(g_all), scale=apply(g_all,2,sd))
+                  center=mean_col_g, scale=sd_col_g)
 
   ## Search a best lambda from a multivariate logistic regression
   ##         with outlier status with 10 cross-validation
-
   ## GAM (genomeic annotation model)
   cv.ll = cv.glmnet(g_trng, as.vector(E_disc[train_inds]), lambda=costs,
                     family="binomial", alpha=0, nfolds=10)
@@ -74,16 +80,16 @@ evaRIVER <- function(G, E, pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7), nr
   em.res <- integratedEM(g_trng, E_disc[train_inds], cv.ll$lambda.min,
                          cv.ll$glmnet.fit, pseudoc, theta_init, costs, verbose)
 
-  ## Generate G data for test data (individual 1 from N2 pairs)
-  g_test <- scale(as.matrix(G[dups[,2], 3:ncol(G)]),
-                  center=colMeans(g_all), scale=apply(g_all,2,sd))
+  # ## Generate G data for test data (Revised)
+  g_test <- scale(as.matrix(G[test_inds, 3:ncol(G)]),
+                  center=mean_col_g, scale=sd_col_g)
 
   ## Compute P(FR | G, E)
-  dup.post = testPosteriors(g_test, E_disc[dups[,2]], em.res)
+  dup.post = testPosteriors(g_test, E_disc[test_inds], em.res)
 
   ## Check performance of models with N2 pairs
-  RIVER.roc = roc(basic_data$E_disc[dups[,1]], dup.post$posterior[,2]) # RIVER
-  GAM.roc = roc(basic_data$E_disc[dups[,1]], pp[dups[,1]]) # GAM
+  RIVER.roc = roc(E_disc[test_inds_rev], dup.post$posterior[,2]) # RIVER
+  GAM.roc = roc(E_disc[test_inds_rev], pp[test_inds]) # GAM
 
   if (verbose) {
     cat('*** AUC (GAM - genomic annotation model): ',round(GAM.roc$auc,3),'\n')

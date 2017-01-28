@@ -5,6 +5,7 @@ test_that("Two main functions work as expected", {
   ## simulated data
   G <- simulated_features
   E <- simulated_outliers
+  P <- simulated_N2pairs
 
   ## check input data
   expect_identical(G[,"SubjectID"],E[,"SubjectID"])
@@ -19,7 +20,7 @@ test_that("Two main functions work as expected", {
   expect_equal(sum(unique(E[,"Outlier"])),1)
   expect_equal(colSums(theta_init),c(1,1))
 
-  rocstat <- evaRIVER(G, E, pseudoc=50, theta_init, costs)
+  rocstat <- evaRIVER(G, E, P, pseudoc=50, theta_init, costs)
 
   ## evaRIVER works as expected
   expect_is(rocstat, "list")
@@ -45,12 +46,13 @@ test_that("Two plot functions work as expected", {
   ## simulated data
   G <- simulated_features
   E <- simulated_outliers
+  P <- simulated_N2pairs
 
   ## experimental setup
   theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
   costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
 
-  rocstat <- evaRIVER(G, E, pseudoc=50, theta_init, costs)
+  rocstat <- evaRIVER(G, E, P, pseudoc=50, theta_init, costs)
   ## plotAUC works as expected
   expect_silent(plotAUC(rocstat))
 

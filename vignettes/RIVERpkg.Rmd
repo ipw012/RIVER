@@ -66,8 +66,9 @@ Our `RIVERpkg` has several functions supporting two main functions including `ev
 ```{r}
 data(simulated_features) # G: features from genomic annotations
 data(simulated_outliers) # E: outlier status from expression data
+data(simulated_N2pairs) # P: N2 pairs for evaluating models
 ```
-Two commands load two input data, `simulated_features` with continuous values of genomic features (defined as $G$ in the objective function) and `simulated_outliers` with binary values of outlier status across samples (defined as $E$ in the objective function)  in `data.frame` formats, from this saved R data archive. The first input data, `simulated_features`, consists of subject IDs, gene names, and feature values from genomic annotations including conservation scores like Gerp, chromatin states from chromHMM or segway, and other summary scores such as CADD and DANN.
+Above three commands load three input data, `simulated_features` with continuous values of genomic features (defined as $G$ in the objective function), `simulated_outliers` with binary values of outlier status across samples (defined as $E$ in the objective function), and `simulated_N2pairs` with a list of N2 pairs containing pairs of examples with same rare variants in `data.frame` formats, from this saved R data archive. The first input data, `simulated_features`, consists of subject IDs, gene names, and feature values from genomic annotations including conservation scores like Gerp, chromatin states from chromHMM or segway, and other summary scores such as CADD and DANN.
 ```{r}
 head(simulated_features)
 ```
@@ -75,11 +76,17 @@ The intances were selected based on two criteria: (1) any genes having at least 
 ```{r}
 head(simulated_outliers)
 ```
+`simulated_N2pairs` consist of a list of two individuals having same rare variants near genes. More specifically, given each of targeted genes (second and fourth column) in each row, first column contains subject ID of 1st individual and third column contains subject ID of 2nd individual from N2 pairs having same rare variants near the genes like
+```{r}
+head(simulated_N2pairs)
+```
+The `simulated_N2pairs` is used for evaluating models. Note that the three input data are in the same order.
+
 In further details of a list of genomic annotations used for constructing features and how to generate the features and outlier status, please refer to our publication [pre-print](http://biorxiv.org/content/early/2016/09/09/074443).
 
 For evaluation, we hold out pairs of individuals at genes where only those two individuals shared the same rare variants. Except for the list of instances, we train *RIVER* with the rest of instances, compute the *RIVER* score (the posterior probability of having a functional regulatory variant given both WGS and RNA-seq data) from one individual, and assess the accuracy with respect to the second individual’s held out expression levels. Using this labeled test data, we evaluate the predictive accuracy of *RIVER* compared with a genomic annotation model (*GAM*) that uses genomic annotations alone, and observe a significant improvement by incorporating expression data. To do so, we simply use `evaRIVER`:
 ```{r}
-rocSTAT <- evaRIVER(simulated_features, simulated_outliers)
+rocSTAT <- evaRIVER(simulated_features, simulated_outliers, simulated_N2pairs)
 ```
 "rocSTAT" is an object of class that contains all the relevant information necessary for generating ROC curves of the two models with AUC values and their p-value. 
 ```{r}
@@ -114,8 +121,8 @@ As shown in this figure, the integration of both genomic features and expression
 The function, `evaRIVER`, is to see how much we can gain additional information by integrating an outlier status of gene expression into integrated models. The prioritization of functional rare variants has difficulty in its evaluation especially due to no gold standard class of the functionality of rare variants. To come up with this limitation, we extract pairs of individuals for genes having same rare variants and hold them out for the evaluation. In other words, we train *RIVER* with all the instances except for those heldout pairs of individuals, calculate posterior probabilities of functional regulatory variants given genomic features and outlier status for the first individual, and compare the probabilities with the second individual's outlier status. You can simply observe how the entire steps of evaluating models including both *RIVER* and *GAM* proceed by using `evaRIVER` with `verbose=TRUE`.:
 
 ```{r}
-rocSTAT <- evaRIVER(simulated_features, simulated_outliers, pseudoc=50, 
-                    theta_init=matrix(c(.99, .01, .3, .7), nrow=2), 
+rocSTAT <- evaRIVER(simulated_features, simulated_outliers, simulated_N2pairs, 
+                    pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7), nrow=2), 
                     costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4), verbose=TRUE)
 ```
 `evaRIVER` has two input data including features and outliers and four optional parameters including pseudo count, initial theta, a list of candidate $\lambda$, and verbose. For two input data, `simulated_features` should contain from left columns to right columns subject IDs, gene names, and aggregated genomic features and `simulated_outliers` should contain from left columns to right columns subject IDs, gene names, and outlier status. both input data should be matched in the same order. Most of optional parameters are set according to your input data. The `pseudoc` is a hyperparameter for estimating `theta`, parameters between an unobserved `FR` node and observed outlier `E` node. Lower `pseudoc` provides higher reliance on observed data. The `theta_init` is an initial set of theta parameters. From left to right, the elements are $P(E = 0 | FR = 0)$, $P(E = 1 | FR = 0)$, $P(E = 0 | FR = 1)$, and $P(E = 1 | FR = 1)$, respecitively. The `costs` are the list of candidate $\lambda$ for searching the best L2 penaly hyperparameter for both *GAM* and *RIVER*. For more information on optinoal paramters, see Appendix 5.1 for optional parameters and Appendix 5.2 for parameter stabilities across different initializations.

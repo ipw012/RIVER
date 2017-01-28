@@ -4,7 +4,7 @@
 \alias{evaRIVER}
 \title{Evaluation of RIVER}
 \usage{
-evaRIVER(G, E, pseudoc = 50, theta_init = matrix(c(0.99, 0.01, 0.3, 0.7),
+evaRIVER(G, E, P, pseudoc = 50, theta_init = matrix(c(0.99, 0.01, 0.3, 0.7),
   nrow = 2), costs = c(100, 10, 1, 0.1, 0.01, 0.001, 1e-04),
   verbose = FALSE)
 }
@@ -15,6 +15,11 @@ per row.}
 
 \item{E}{Expression outliers in the data frame which contains subject IDs,
 gene symbols, and outlier status of each instance per row.}
+
+\item{P}{A list of N2 pairs in the data frame which contains pairs of
+examples with same rare variants. First two columns contain
+SubjectID1 and GeneName1 for one and next two columns contain
+SubjectID2 and GeneName2 for another.}
 
 \item{pseudoc}{Pseudo count.}
 
@@ -43,7 +48,8 @@ An object of class RIVER which include two AUC values from
 \examples{
 G <- simulated_features
 E <- simulated_outliers
-rocSTAT <- evaRIVER(G, E, verbose=TRUE)
+P <- simulated_N2pairs
+rocSTAT <- evaRIVER(G, E, P, verbose=TRUE)
 
 }
 \author{
