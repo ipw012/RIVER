@@ -4,22 +4,14 @@
 \alias{evaRIVER}
 \title{Evaluation of RIVER}
 \usage{
-evaRIVER(G, E, P, pseudoc = 50, theta_init = matrix(c(0.99, 0.01, 0.3, 0.7),
-  nrow = 2), costs = c(100, 10, 1, 0.1, 0.01, 0.001, 1e-04),
+evaRIVER(dataInput, pseudoc = 50, theta_init = matrix(c(0.99, 0.01, 0.3,
+  0.7), nrow = 2), costs = c(100, 10, 1, 0.1, 0.01, 0.001, 1e-04),
   verbose = FALSE)
 }
 \arguments{
-\item{G}{Genomic features in the data frame which contains subject IDs,
-gene symbols, and P number of genomic fetures of each instance
-per row.}
-
-\item{E}{Expression outliers in the data frame which contains subject IDs,
-gene symbols, and outlier status of each instance per row.}
-
-\item{P}{A list of N2 pairs in the data frame which contains pairs of
-examples with same rare variants. First two columns contain
-SubjectID1 and GeneName1 for one and next two columns contain
-SubjectID2 and GeneName2 for another.}
+\item{dataInput}{An object of ExpressionSet class which contains input data
+required for all functions in RIVERpkg including genomic features,
+outlier status, and N2 pairs.}
 
 \item{pseudoc}{Pseudo count.}
 
@@ -31,9 +23,9 @@ regression.}
 \item{verbose}{Logical option for showing extra information on progress.}
 }
 \value{
-An object of class RIVER which include two AUC values from
-        RIVER and GAM and corresponding P-value of comparing the two AUC
-        values.
+A list which contains two AUC values from RIVER and GAM, computed
+        specificities and sensitivities from two models, and P-value of
+        comparing the two AUC values.
 }
 \description{
 \code{evaRIVER} trains RIVER by holding out a list of individual and gene
@@ -46,10 +38,9 @@ An object of class RIVER which include two AUC values from
         faster than to input a single penalty value
 }
 \examples{
-G <- simulated_features
-E <- simulated_outliers
-P <- simulated_N2pairs
-rocSTAT <- evaRIVER(G, E, P, verbose=TRUE)
+dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+        package = "RIVERpkg"), ZscoreThrd=1.5)
+evaROC <- evaRIVER(dataInput, verbose=TRUE)
 
 }
 \author{
@@ -57,6 +48,7 @@ Yungil Kim, \email{ipw012@gmail.com}
 }
 \seealso{
 \code{\link[glmnet]{cv.glmnet}}, \code{\link{predict}},
-        \code{\link{integratedEM}}, and \code{\link{testPosteriors}}
+        \code{\link{integratedEM}}, \code{\link{testPosteriors}},
+        \code{\link{getData}}, \code{\link[Biobase]{exprs}}
 }
 

@@ -14,16 +14,16 @@
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
 #' @examples
-#' G <- simulated_features
-#' E <- simulated_outliers
-#' g_all <- scale(as.matrix(G[,3:ncol(G)]))
-#' E_disc = as.vector(as.numeric(E[,"Outlier"]))
+#' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+#'         package = "RIVERpkg"), ZscoreThrd=1.5)
+#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
 #' theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
 #' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(g_all, E_disc, lambda=costs, family="binomial",
+#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
 #'         alpha=0, nfolds=10)
-#' p.FR.givenG = getFRgivenG(g_all, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
-#' posteriors = getFRPosteriors(E_disc, p.FR.givenG, theta=theta_init)
+#' p.FR.givenG = getFRgivenG(G, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
+#' posteriors = getFRPosteriors(E, p.FR.givenG, theta=theta_init)
 #'
 #' @export
 
@@ -53,17 +53,17 @@ getFRPosteriors <- function(E, p.FR.givenG, theta) {
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
 #' @examples
-#' G <- simulated_features
-#' E <- simulated_outliers
-#' g_all <- scale(as.matrix(G[,3:ncol(G)]))
-#' E_disc = as.vector(as.numeric(E[,"Outlier"]))
+#' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+#'         package = "RIVERpkg"), ZscoreThrd=1.5)
+#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
 #' theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
 #' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(g_all, E_disc, lambda=costs, family="binomial",
+#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
 #'         alpha = 0, nfolds=10)
-#' p.FR.givenG = getFRgivenG(g_all, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
-#' posteriors = getFRPosteriors(E_disc, p.FR.givenG, theta=theta_init)
-#' theta.cur = mleTheta(E_disc, posteriors$posterior, pseudoc=50)
+#' p.FR.givenG = getFRgivenG(G, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
+#' posteriors = getFRPosteriors(E, p.FR.givenG, theta=theta_init)
+#' theta.cur = mleTheta(E, FR=posteriors$posterior, pseudoc=50)
 #'
 #' @export
 
@@ -96,17 +96,17 @@ mleTheta <- function(E, FR, pseudocount) {
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
 #' @examples
-#' G <- simulated_features
-#' E <- simulated_outliers
-#' g_all <- scale(as.matrix(G[,3:ncol(G)]))
-#' E_disc = as.vector(as.numeric(E[,"Outlier"]))
+#' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+#'         package = "RIVERpkg"), ZscoreThrd=1.5)
+#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
 #' theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
 #' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(g_all, E_disc, lambda=costs, family="binomial",
+#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
 #'         alpha=0, nfolds=10)
-#' p.FR.givenG = getFRgivenG(g_all, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
-#' posteriors = getFRPosteriors(E_disc, p.FR.givenG, theta=theta_init)
-#' logistic.cur = mleBeta(g_all, posteriors$posterior, costs)
+#' p.FR.givenG = getFRgivenG(G, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
+#' posteriors = getFRPosteriors(E, p.FR.givenG, theta=theta_init)
+#' logistic.cur = mleBeta(G, FR=posteriors$posterior, costs)
 #'
 #' @seealso \code{\link[glmnet]{glmnet}}
 #'
@@ -131,14 +131,15 @@ mleBeta <- function(G, FR, costs) {
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
 #' @examples
-#' G <- simulated_features
-#' E <- simulated_outliers
-#' g_all <- scale(as.matrix(G[,3:ncol(G)]))
-#' E_disc = as.vector(as.numeric(E[,"Outlier"]))
+#' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+#'         package = "RIVERpkg"), ZscoreThrd=1.5)
+#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
 #' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(g_all, E_disc, lambda=costs, family="binomial",
+#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
 #'         alpha = 0, nfolds=10)
-#' p.FR.givenG = getFRgivenG(g_all, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
+#' p.FR.givenG = getFRgivenG(G, logistic.model=cv.all.ll$glmnet.fit,
+#'         lambda=cv.all.ll$lambda.min)
 #'
 #' @seealso \code{\link{predict}}
 #'
@@ -165,17 +166,17 @@ getFRgivenG <- function(G, logistic.model, lambda) {
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
 #' @examples
-#' G <- simulated_features
-#' E <- simulated_outliers
-#' g_all <- scale(as.matrix(G[,3:ncol(G)]))
-#' E_disc = as.vector(as.numeric(E[,"Outlier"]))
+#' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+#'         package = "RIVERpkg"), ZscoreThrd=1.5)
+#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
 #' theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
 #' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(g_all, E_disc, lambda=costs, family="binomial",
+#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
 #'         alpha = 0, nfolds=10)
-#' em.all.res <- integratedEM(g_all, E_disc, cv.all.ll$lambda.min,
-#' cv.all.ll$glmnet.fit, pseudoc=50, theta_init, costs, verbose=FALSE)
-#' train.post = testPosteriors(g_all, E_disc, em.all.res)
+#' em.all.res <- integratedEM(G, E, cv.all.ll$lambda.min, cv.all.ll$glmnet.fit,
+#'         pseudoc=50, theta_init, costs, verbose=FALSE)
+#' train.post = testPosteriors(G, E, em.results=em.all.res)
 #'
 #' @seealso \code{\link{getFRgivenG}} and \code{\link{getFRPosteriors}}
 #'
@@ -215,16 +216,17 @@ testPosteriors <- function(G, E, em.results) {
 #'         and \url{https://github.com/ipw012/RIVERpkg}
 #'
 #' @examples
-#' G <- simulated_features
-#' E <- simulated_outliers
-#' g_all <- scale(as.matrix(G[,3:ncol(G)]))
-#' E_disc = as.vector(as.numeric(E[,"Outlier"]))
+#' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+#'         package = "RIVERpkg"), ZscoreThrd=1.5)
+#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
 #' theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
 #' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(g_all, E_disc, lambda=costs,
-#'         family="binomial", alpha = 0, nfolds=10)
-#' em.all.res <- integratedEM(g_all, E_disc, cv.all.ll$lambda.min,
-#'         cv.all.ll$glmnet.fit, pseudoc=50, theta_init, costs, verbose=FALSE)
+#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
+#'         alpha = 0, nfolds=10)
+#' em.all.res <- integratedEM(G, E, lambda=cv.all.ll$lambda.min,
+#'         logistic.init=cv.all.ll$glmnet.fit, pseudoc=50, theta=theta_init,
+#'         costs, verbose=FALSE)
 #'
 #' @export
 

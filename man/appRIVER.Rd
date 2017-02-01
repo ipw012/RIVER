@@ -4,16 +4,14 @@
 \alias{appRIVER}
 \title{Application of RIVER}
 \usage{
-appRIVER(G, E, pseudoc = 50, theta_init = matrix(c(0.99, 0.01, 0.3, 0.7),
-  nrow = 2), costs = c(100, 10, 1, 0.1, 0.01, 0.001, 1e-04),
+appRIVER(dataInput, pseudoc = 50, theta_init = matrix(c(0.99, 0.01, 0.3,
+  0.7), nrow = 2), costs = c(100, 10, 1, 0.1, 0.01, 0.001, 1e-04),
   verbose = FALSE)
 }
 \arguments{
-\item{G}{Genomic features in the data frame which contains subject IDs, gene
-symbols, and P number of genomic fetures of each instance per row.}
-
-\item{E}{Expression outliers in the data frame which contains subject IDs,
-gene symbols, and outlier status of each instance per row.}
+\item{dataInput}{An object of ExpressionSet class which contains input data
+required for all functions in RIVERpkg including genomic features,
+outlier status, and N2 pairs.}
 
 \item{pseudoc}{Pseudo count.}
 
@@ -25,9 +23,9 @@ regression.}
 \item{verbose}{Logical option for showing extra information on progress.}
 }
 \value{
-outRIVER An object of class RIVER which contains subject IDs, gene
-        names, posterior probabilities from GAM and RIVER, and estimated
-        parameters from RIVER
+A list which contains subject IDs, gene names, posterior
+        probabilities from GAM and RIVER, and estimated parameters from
+        RIVER with used hyperparameters.
 }
 \description{
 \code{appRIVER} trains RIVER with all instances and computes posterior
@@ -38,9 +36,9 @@ outRIVER An object of class RIVER which contains subject IDs, gene
         \code{glmnet} faster than to input a single penalty value
 }
 \examples{
-G <- simulated_features
-E <- simulated_outliers
-outRIVER <- appRIVER(G, E, verbose=TRUE)
+dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+        package = "RIVERpkg"), ZscoreThrd=1.5)
+postprobs <- appRIVER(dataInput, verbose=TRUE)
 
 }
 \author{
@@ -48,6 +46,7 @@ Yungil Kim, \email{ipw012@gmail.com}
 }
 \seealso{
 \code{\link[glmnet]{cv.glmnet}}, \code{\link{predict}},
-        \code{\link{integratedEM}}, and \code{\link{testPosteriors}}
+        \code{\link{integratedEM}}, \code{\link{testPosteriors}},
+        \code{\link{getData}}, \code{\link[Biobase]{exprs}}
 }
 

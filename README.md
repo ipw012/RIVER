@@ -11,7 +11,7 @@ For further details of a list of genomic annotations used for constructing featu
 
 # Installation
 
-Get R 3.3.x from [CRAN](http://cran.r-project.org/).
+Get most recent version of R (>= 3.3.2) from [CRAN](http://cran.r-project.org/).
 
 ```R
 ## try http:// if https:// URLs are not supported

@@ -23,16 +23,16 @@ P(FR | G, E, beta, theta) and probable status of FR.
         and theta (parameters between FR and E).
 }
 \examples{
-G <- simulated_features
-E <- simulated_outliers
-g_all <- scale(as.matrix(G[,3:ncol(G)]))
-E_disc = as.vector(as.numeric(E[,"Outlier"]))
+dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+        package = "RIVERpkg"), ZscoreThrd=1.5)
+G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
 theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
 costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-cv.all.ll = glmnet::cv.glmnet(g_all, E_disc, lambda=costs, family="binomial",
+cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
         alpha=0, nfolds=10)
-p.FR.givenG = getFRgivenG(g_all, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
-posteriors = getFRPosteriors(E_disc, p.FR.givenG, theta=theta_init)
+p.FR.givenG = getFRgivenG(G, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
+posteriors = getFRPosteriors(E, p.FR.givenG, theta=theta_init)
 
 }
 \author{

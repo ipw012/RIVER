@@ -3,37 +3,35 @@
 #' \code{plotAUC} plots AUC curves from both RIVER and GAM (genomic annotation
 #'         model).
 #'
-#' @param rocstat Output of \code{evaRIVER}, which provides AUC values from both
-#'         RIVER and GAM models and p-value between two AUCs.
+#' @param evaROC Output of \code{evaRIVER}, an S4 object of class evaRIVER which
+#'         include two AUC values from RIVER and GAM, computed specificities and
+#'         sensitivities from two models, and P-value of comparing the two AUC
+#'         values.
 #'
 #' @return AUC figure
 #'
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
 #' @examples
-#' G <- simulated_features
-#' E <- simulated_outliers
-#' P <- simulated_N2pairs
-#' rocstat <- evaRIVER(G, E, P, pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7),
-#'             nrow=2), costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4), verbose=FALSE)
-#' plotAUC(rocstat)
+#' data <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+#'         package = "RIVERpkg"), ZscoreThrd=1.5)
+#' evaROC <- evaRIVER(data, verbose=TRUE)
+#' plotAUC(evaROC)
 #'
 #' @export
 
-plotAUC <-function(rocstat){
+plotAUC <-function(evaROC){
   par(mar=c(6.1, 6.1, 4.1, 4.1))
   plot(NULL, xlim=c(0,1), ylim=c(0,1), xlab="False positive rate",
        ylab="True positive rate", cex.axis=1.3, cex.lab=1.6)
   abline(0, 1, col="gray")
-  lines(1-rocstat$rocRIVER$specificities, rocstat$rocRIVER$sensitivities,
-        type="s", col='dodgerblue', lwd=2)
-  lines(1-rocstat$rocGAM$specificities, rocstat$rocGAM$sensitivities,
-        type="s", col='mediumpurple', lwd=2)
+  lines(1-evaROC$RIVER_spec, evaROC$RIVER_sens, type="s", col='dodgerblue', lwd=2)
+  lines(1-evaROC$GAM_spec, evaROC$GAM_sens, type="s", col='mediumpurple', lwd=2)
   legend(0.7,0.2,c("RIVER","GAM"), lty=c(1,1), lwd=c(2,2),
          col=c("dodgerblue","mediumpurple"), cex=1.2, pt.cex=1.2, bty="n")
-  title(main=paste("AUC: RIVER = ", round(rocstat$rocRIVER$auc,3), ", GAM = ",
-                   round(rocstat$rocGAM$auc,3), ", P = ",
-                   format.pval(rocstat$pValue,digits=2, eps=0.001),sep=""))
+  title(main=paste("AUC: RIVER = ", round(evaROC$RIVER_auc,3), ", GAM = ",
+                   round(evaROC$GAM_auc,3), ", P = ",
+                   format.pval(evaROC$pvalue, digits=2, eps=0.001),sep=""))
 }
 
 #' Draw scatter plots of posterior probabilities from both RIVER GAM in terms
@@ -53,34 +51,30 @@ plotAUC <-function(rocstat){
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
 #' @examples
-#' G <- simulated_features
-#' E <- simulated_outliers
-#' outRIVER <- appRIVER(G, E, pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7),
-#'         nrow=2), costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4), verbose=TRUE)
-#' plotPosteriors(outRIVER, E)
+#' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+#'         package = "RIVERpkg"), ZscoreThrd=1.5)
+#' postprobs <- appRIVER(dataInput)
+#' plotPosteriors(postprobs, outliers=as.numeric(unlist(dataInput$Outlier))-1)
 #'
 #' @export
 
 plotPosteriors <- function(postprobs, outliers) {
-  ## For R CMD check
   pFRgivenG <- pFRgivenGE <- Outliers <- NULL
 
   par(mar=c(6.1, 6.1, 4.1, 4.1))
-  dat = data.frame(pFRgivenG=postprobs$pFRgivenG,
-                   pFRgivenGE=postprobs$pFRgivenGE,
-                   outliers=as.factor(outliers[,"Outlier"]))
-  ## dat.outliers = as.factor(dat.outliers)
+  dat = data.frame(pFRgivenG=postprobs$GAM_posterior,
+                   pFRgivenGE=postprobs$RIVER_posterior,
+                   outliers=as.factor(outliers))
   colnames(dat) = c("pFRgivenG","pFRgivenGE","Outliers")
+
   ggplot(dat, aes(x=pFRgivenG, y=pFRgivenGE, color=Outliers)) +
     geom_point(shape=1, size=4) +
     geom_abline(intercept=0,slope=1,color="darkgray",size=1,linetype=2) +
-    ## scale_colour_hue(l=50) +
     theme_bw() + xlab("P( FR | G)") + ylab("P( FR | G, E)") +
     scale_color_manual(values=c("dodgerblue","mediumpurple"),
                        name="",
                        breaks=c("0", "1"),
                        labels=c("Non-outlier", "Outlier")) +
-    ## geom_smooth(method=lm, se=FALSE, fullrange=TRUE) +
     theme(axis.title.x = element_text(size=18),
           axis.text.x  = element_text(size=14),
           axis.title.y = element_text(size=18),

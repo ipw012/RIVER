@@ -40,6 +40,9 @@
 #' @name RIVERpkg
 #' @import dplyr pROC ggplot2
 #' @rawNamespace import(glmnet, except = "auc")
+#' @importFrom data.table fread
+#' @importFrom Biobase ExpressionSet exprs sampleNames
+#' @importFrom methods new
 #' @importFrom graphics abline legend lines par plot title
 #' @importFrom stats predict quantile sd
 #' @importFrom glmnet cv.glmnet

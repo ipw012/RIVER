@@ -23,11 +23,10 @@ A figure of posteriors from RIVER (y-axis) and GAM (x-axis) models
         status.
 }
 \examples{
-G <- simulated_features
-E <- simulated_outliers
-outRIVER <- appRIVER(G, E, pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7),
-        nrow=2), costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4), verbose=TRUE)
-plotPosteriors(outRIVER, E)
+dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+        package = "RIVERpkg"), ZscoreThrd=1.5)
+postprobs <- appRIVER(dataInput)
+plotPosteriors(postprobs, outliers=as.numeric(unlist(dataInput$Outlier))-1)
 
 }
 \author{

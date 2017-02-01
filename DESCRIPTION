@@ -1,5 +1,5 @@
 Package: RIVERpkg
-Date: 2017-01-06
+Date: 2017-02-01
 Title: R package for RIVER (RNA-Informed Variant Effect on Regulation)
 Description: An implementation of a probabilistic modeling framework that jointly 
         analyzes personal genome and transcriptome data to estimate the probability that 
@@ -23,7 +23,7 @@ biocViews: GeneExpression, GeneticVariability, SNP, Transcription, FunctionalPre
         GeneRegulation, GenomicVariation, BiomedicalInformatics, FunctionalGenomics, 
         Genetics, SystemsBiology, Transcriptomics, Bayesian, Clustering, 
         TranscriptomeVariant, Regression
-Imports: dplyr, glmnet, pROC, ggplot2, graphics, stats
+Imports: dplyr, glmnet, pROC, ggplot2, graphics, stats, data.table, Biobase, methods
 License: GPL (>= 2)
 RoxygenNote: 5.0.1
 LazyData: true

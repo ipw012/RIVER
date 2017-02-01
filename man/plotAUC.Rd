@@ -4,11 +4,13 @@
 \alias{plotAUC}
 \title{Draw AUC curves from both RIVER and GAM.}
 \usage{
-plotAUC(rocstat)
+plotAUC(evaROC)
 }
 \arguments{
-\item{rocstat}{Output of \code{evaRIVER}, which provides AUC values from both
-RIVER and GAM models and p-value between two AUCs.}
+\item{evaROC}{Output of \code{evaRIVER}, an S4 object of class evaRIVER which
+include two AUC values from RIVER and GAM, computed specificities and
+sensitivities from two models, and P-value of comparing the two AUC
+values.}
 }
 \value{
 AUC figure
@@ -18,12 +20,10 @@ AUC figure
         model).
 }
 \examples{
-G <- simulated_features
-E <- simulated_outliers
-P <- simulated_N2pairs
-rocstat <- evaRIVER(G, E, P, pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7),
-            nrow=2), costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4), verbose=FALSE)
-plotAUC(rocstat)
+data <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+        package = "RIVERpkg"), ZscoreThrd=1.5)
+evaROC <- evaRIVER(data, verbose=TRUE)
+plotAUC(evaROC)
 
 }
 \author{

@@ -22,14 +22,15 @@ P(FR | G)
         of beta (parameters between FR and G).
 }
 \examples{
-G <- simulated_features
-E <- simulated_outliers
-g_all <- scale(as.matrix(G[,3:ncol(G)]))
-E_disc = as.vector(as.numeric(E[,"Outlier"]))
+dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+        package = "RIVERpkg"), ZscoreThrd=1.5)
+G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
 costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-cv.all.ll = glmnet::cv.glmnet(g_all, E_disc, lambda=costs, family="binomial",
+cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
         alpha = 0, nfolds=10)
-p.FR.givenG = getFRgivenG(g_all, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
+p.FR.givenG = getFRgivenG(G, logistic.model=cv.all.ll$glmnet.fit,
+        lambda=cv.all.ll$lambda.min)
 
 }
 \author{

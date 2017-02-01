@@ -2,62 +2,44 @@ library(RIVERpkg)
 context("Two main functions for RIVER")
 
 test_that("Two main functions work as expected", {
-  ## simulated data
-  G <- simulated_features
-  E <- simulated_outliers
-  P <- simulated_N2pairs
+  dataInput = getData(filename=system.file("extdata", "simulation_RIVER.gz",
+                                           package = "RIVERpkg"), ZscoreThrd=1.5)
 
-  ## check input data
-  expect_identical(G[,"SubjectID"],E[,"SubjectID"])
-  expect_identical(G[,"GeneName"],E[,"GeneName"])
-
-  ## experimental setup
   theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
   costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
 
-  ## check experimental setup
-  expect_equal(dim(G)[1],dim(E)[1])
-  expect_equal(sum(unique(E[,"Outlier"])),1)
-  expect_equal(colSums(theta_init),c(1,1))
-
-  rocstat <- evaRIVER(G, E, P, pseudoc=50, theta_init, costs)
-
   ## evaRIVER works as expected
-  expect_is(rocstat, "list")
-  expect_equal(length(rocstat),3)
-  expect_equal(length(rocstat$rocRIVER$specificities),
-               length(rocstat$rocRIVER$sensitivities))
-  expect_equal(length(rocstat$rocGAM$specificities),
-               length(rocstat$rocGAM$sensitivities))
-  expect_lte(rocstat$pValue,1)
-
-  outRIVER <- appRIVER(G, E, pseudoc=50, theta_init, costs)
+  evaROC <- evaRIVER(dataInput)
+  expect_equal(length(evaROC$RIVER_sens),length(evaROC$RIVER_spec))
+  expect_equal(length(evaROC$GAM_sens),length(evaROC$GAM_spec))
+  expect_lte(evaROC$pvalue,1)
+  expect_equal(class(evaROC$RIVER_auc),"numeric")
 
   ## appRIVER works as expected
-  expect_is(outRIVER, "list")
-  expect_equal(length(outRIVER),5)
-  expect_equal(length(outRIVER$pFRgivenG),dim(G)[1])
-  expect_equal(length(outRIVER$pFRgivenGE),dim(G)[1])
+  postprobs <- appRIVER(dataInput, pseudoc=50, theta_init, costs)
+  expect_is(postprobs$indiv_name,"character")
+  expect_is(postprobs$gene_name,"character")
+  expect_equal(length(postprobs$RIVER_posterior),length(postprobs$GAM_posterior))
+  expect_identical(sampleNames(dataInput),
+                   paste(postprobs$indiv_name,":",postprobs$gene_name,sep=""))
+  expect_is(postprobs$fitRIVER, "list")
 })
 
 context("Two optional plot functions for RIVER")
 
 test_that("Two plot functions work as expected", {
-  ## simulated data
-  G <- simulated_features
-  E <- simulated_outliers
-  P <- simulated_N2pairs
+  dataInput = getData(filename=system.file("extdata", "simulation_RIVER.gz",
+                                           package = "RIVERpkg"), ZscoreThrd=1.5)
 
-  ## experimental setup
   theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
   costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
 
-  rocstat <- evaRIVER(G, E, P, pseudoc=50, theta_init, costs)
+  rocstat <- evaRIVER(dataInput, pseudoc=50, theta_init, costs)
   ## plotAUC works as expected
   expect_silent(plotAUC(rocstat))
 
-  outRIVER <- appRIVER(G, E, pseudoc=50, theta_init, costs)
+  outRIVER <- appRIVER(dataInput, pseudoc=50, theta_init, costs)
 
   ## plotPosteriors works as expected
-  expect_silent(plotPosteriors(outRIVER, E))
+  expect_silent(plotPosteriors(outRIVER, as.numeric(unlist(dataInput$Outlier))-1))
 })
