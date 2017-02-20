@@ -1,5 +1,5 @@
 Package: RIVERpkg
-Date: 2017-02-01
+Date: 2017-02-17
 Title: R package for RIVER (RNA-Informed Variant Effect on Regulation)
 Description: An implementation of a probabilistic modeling framework that jointly 
         analyzes personal genome and transcriptome data to estimate the probability that 
