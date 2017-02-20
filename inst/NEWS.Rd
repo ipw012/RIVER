@@ -1,6 +1,12 @@
 \name{NEWS}
 \title{News for Package \pkg{RIVERpkg}}
 
+\section{Changes in version 0.99.2 (2017-02-20)}{
+  \itemize{
+    \item Chagne R version and bump RIVERpkg version from 0.99.1 to 0.99.2
+  }
+}
+
 \section{Changes in version 0.99.1 (2017-02-01)}{
   \itemize{
     \item Revise evaRIVER.R and add simulated_N2pairs.RData into the package to obtain feature-invariant N2 pairs
