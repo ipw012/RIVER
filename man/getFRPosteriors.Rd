@@ -38,4 +38,3 @@ posteriors = getFRPosteriors(E, p.FR.givenG, theta=theta_init)
 \author{
 Yungil Kim, \email{ipw012@gmail.com}
 }
-

@@ -50,13 +50,12 @@ em.all.res <- integratedEM(G, E, lambda=cv.all.ll$lambda.min,
         costs, verbose=FALSE)
 
 }
-\author{
-Yungil Kim, \email{ipw012@gmail.com}
-}
 \seealso{
 \code{\link{getFRgivenG}}, \code{\link{getFRPosteriors}},
         \code{\link{mleTheta}}, \code{\link{mleBeta}},
         \code{\link[glmnet]{cv.glmnet}},
         and \url{https://github.com/ipw012/RIVERpkg}
 }
-
+\author{
+Yungil Kim, \email{ipw012@gmail.com}
+}

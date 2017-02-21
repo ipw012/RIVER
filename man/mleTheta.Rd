@@ -38,4 +38,3 @@ theta.cur = mleTheta(E, FR=posteriors$posterior, pseudoc=50)
 \author{
 Yungil Kim, \email{ipw012@gmail.com}
 }
-

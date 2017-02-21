@@ -1,5 +1,5 @@
 Package: RIVERpkg
-Date: 2017-02-01
+Date: 2017-02-20
 Title: R package for RIVER (RNA-Informed Variant Effect on Regulation)
 Description: An implementation of a probabilistic modeling framework that jointly 
         analyzes personal genome and transcriptome data to estimate the probability that 
@@ -10,7 +10,7 @@ Description: An implementation of a probabilistic modeling framework that jointl
         regulatory variant status then influences whether nearby genes are likely to 
         display outlier levels of gene expression in that person. See the RIVER website 
         for more information, documentation and examples.
-Version: 0.99.2
+Version: 0.99.3
 Authors@R: c(person("Yungil", "Kim", role = c("aut", "cre"), email = "ipw012@gmail.com"),
         person("Damani", "Farhan", role = "ctb", email = "farhand7@gmail.com"),
         person("Alexis", "Battle", role = "aut", email = "ajbattle@cs.jhu.edu"))
@@ -23,9 +23,9 @@ biocViews: GeneExpression, GeneticVariability, SNP, Transcription, FunctionalPre
         GeneRegulation, GenomicVariation, BiomedicalInformatics, FunctionalGenomics, 
         Genetics, SystemsBiology, Transcriptomics, Bayesian, Clustering, 
         TranscriptomeVariant, Regression
-Imports: dplyr, glmnet, pROC, ggplot2, graphics, stats, data.table, Biobase, methods
+Imports: dplyr, glmnet, pROC, ggplot2, graphics, stats, data.table, Biobase, methods, utils
 License: GPL (>= 2)
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 LazyData: true
 VignetteBuilder: knitr
 Suggests: BiocStyle, knitr, rmarkdown, testthat

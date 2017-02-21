@@ -26,6 +26,7 @@ MLE of beta
  To input a vector of candidate penalty values makes
         \code{glmnet} faster than to input a single penalty value
 }
+
 \examples{
 dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
         package = "RIVERpkg"), ZscoreThrd=1.5)
@@ -40,10 +41,9 @@ posteriors = getFRPosteriors(E, p.FR.givenG, theta=theta_init)
 logistic.cur = mleBeta(G, FR=posteriors$posterior, costs)
 
 }
-\author{
-Yungil Kim, \email{ipw012@gmail.com}
-}
 \seealso{
 \code{\link[glmnet]{glmnet}}
 }
-
+\author{
+Yungil Kim, \email{ipw012@gmail.com}
+}

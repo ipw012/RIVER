@@ -34,10 +34,9 @@ InputData = getData(filename=system.file("extdata", "simulation_RIVER.gz",
         package = "RIVERpkg"), ZscoreThrd=1.5)
 
 }
-\author{
-Yungil Kim, \email{ipw012@gmail.com}
-}
 \seealso{
 \code{\link[data.table]{fread}}, \code{\link[Biobase]{ExpressionSet}},
 }
-
+\author{
+Yungil Kim, \email{ipw012@gmail.com}
+}

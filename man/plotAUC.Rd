@@ -29,4 +29,3 @@ plotAUC(evaROC)
 \author{
 Yungil Kim, \email{ipw012@gmail.com}
 }
-

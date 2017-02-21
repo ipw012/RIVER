@@ -29,8 +29,9 @@
 
 getData <- function(filename=system.file("extdata", "simulation_RIVER.gz",
                                          package = "RIVERpkg"), ZscoreThrd=1.5) {
-  expData = as.data.frame(fread(paste("zcat ", filename, sep=""),
-                                sep='\t', header = TRUE, na.strings = "NA"))
+  # expData = as.data.frame(fread(paste("zcat ", filename, sep=""),
+  #                               sep='\t', header = TRUE, na.strings = "NA")) # Only for linux users
+  expData = read.table(gzfile(filename), header = TRUE)
 
   G = expData[,3:(ncol(expData)-2)] # genomic features
   rownames(G) = paste(expData[,"SubjectID"], ":",

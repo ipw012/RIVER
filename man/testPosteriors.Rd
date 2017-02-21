@@ -37,10 +37,9 @@ em.all.res <- integratedEM(G, E, cv.all.ll$lambda.min, cv.all.ll$glmnet.fit,
 train.post = testPosteriors(G, E, em.results=em.all.res)
 
 }
-\author{
-Yungil Kim, \email{ipw012@gmail.com}
-}
 \seealso{
 \code{\link{getFRgivenG}} and \code{\link{getFRPosteriors}}
 }
-
+\author{
+Yungil Kim, \email{ipw012@gmail.com}
+}

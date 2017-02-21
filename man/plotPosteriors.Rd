@@ -32,4 +32,3 @@ plotPosteriors(postprobs, outliers=as.numeric(unlist(dataInput$Outlier))-1)
 \author{
 Yungil Kim, \email{ipw012@gmail.com}
 }
-

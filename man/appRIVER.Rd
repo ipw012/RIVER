@@ -35,18 +35,18 @@ A list which contains subject IDs, gene names, posterior
  To input a vector of candidate penalty values makes
         \code{glmnet} faster than to input a single penalty value
 }
+
 \examples{
 dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
         package = "RIVERpkg"), ZscoreThrd=1.5)
 postprobs <- appRIVER(dataInput, verbose=TRUE)
 
 }
-\author{
-Yungil Kim, \email{ipw012@gmail.com}
-}
 \seealso{
 \code{\link[glmnet]{cv.glmnet}}, \code{\link{predict}},
         \code{\link{integratedEM}}, \code{\link{testPosteriors}},
         \code{\link{getData}}, \code{\link[Biobase]{exprs}}
 }
-
+\author{
+Yungil Kim, \email{ipw012@gmail.com}
+}

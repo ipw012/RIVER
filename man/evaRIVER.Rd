@@ -37,18 +37,18 @@ A list which contains two AUC values from RIVER and GAM, computed
  A vector of candidate penalty values make \code{glmnet}
         faster than to input a single penalty value
 }
+
 \examples{
 dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
         package = "RIVERpkg"), ZscoreThrd=1.5)
 evaROC <- evaRIVER(dataInput, verbose=TRUE)
 
 }
-\author{
-Yungil Kim, \email{ipw012@gmail.com}
-}
 \seealso{
 \code{\link[glmnet]{cv.glmnet}}, \code{\link{predict}},
         \code{\link{integratedEM}}, \code{\link{testPosteriors}},
         \code{\link{getData}}, \code{\link[Biobase]{exprs}}
 }
-
+\author{
+Yungil Kim, \email{ipw012@gmail.com}
+}

@@ -33,10 +33,9 @@ p.FR.givenG = getFRgivenG(G, logistic.model=cv.all.ll$glmnet.fit,
         lambda=cv.all.ll$lambda.min)
 
 }
-\author{
-Yungil Kim, \email{ipw012@gmail.com}
-}
 \seealso{
 \code{\link{predict}}
 }
-
+\author{
+Yungil Kim, \email{ipw012@gmail.com}
+}

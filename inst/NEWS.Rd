@@ -1,9 +1,18 @@
 \name{NEWS}
 \title{News for Package \pkg{RIVERpkg}}
 
+\section{Changes in version 0.99.3 (2017-02-20)}{
+  \itemize{
+    \item Change zcat into gzfile
+    \item Update roxygen version
+    \item Bump version into 0.99.3
+  }
+}
+
 \section{Changes in version 0.99.2 (2017-02-20)}{
   \itemize{
-    \item Chagne R version and bump RIVERpkg version from 0.99.1 to 0.99.2
+    \item Chagne R version from 3.3.1 to 3.3.2
+    \item Bump RIVERpkg version from 0.99.1 to 0.99.2
   }
 }
 

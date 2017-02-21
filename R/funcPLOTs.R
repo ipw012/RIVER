@@ -75,10 +75,8 @@ plotPosteriors <- function(postprobs, outliers) {
                        name="",
                        breaks=c("0", "1"),
                        labels=c("Non-outlier", "Outlier")) +
-    theme(axis.title.x = element_text(size=18),
-          axis.text.x  = element_text(size=14),
-          axis.title.y = element_text(size=18),
-          axis.text.y  = element_text(size=14),
+    theme(axis.title = element_text(size=18),
+          axis.text  = element_text(size=14),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           legend.title = element_blank(),
