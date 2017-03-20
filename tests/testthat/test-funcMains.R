@@ -1,9 +1,9 @@
-library(RIVERpkg)
+library(RIVER)
 context("Two main functions for RIVER")
 
 test_that("Two main functions work as expected", {
   dataInput = getData(filename=system.file("extdata", "simulation_RIVER.gz",
-                                           package = "RIVERpkg"), ZscoreThrd=1.5)
+                                           package = "RIVER"), ZscoreThrd=1.5)
 
   theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
   costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
@@ -29,14 +29,12 @@ context("Two optional plot functions for RIVER")
 
 test_that("Two plot functions work as expected", {
   dataInput = getData(filename=system.file("extdata", "simulation_RIVER.gz",
-                                           package = "RIVERpkg"), ZscoreThrd=1.5)
+                                           package = "RIVER"), ZscoreThrd=1.5)
 
   theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
   costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
 
   rocstat <- evaRIVER(dataInput, pseudoc=50, theta_init, costs)
-  ## plotAUC works as expected
-  expect_silent(plotAUC(rocstat))
 
   outRIVER <- appRIVER(dataInput, pseudoc=50, theta_init, costs)
 

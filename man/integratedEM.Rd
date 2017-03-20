@@ -4,13 +4,13 @@
 \alias{integratedEM}
 \title{An iterative expectation-maximization algorithm for RIVER}
 \usage{
-integratedEM(G, E, lambda, logistic.init, pseudoc, theta.init, costs,
+integratedEM(Feat, Out, lambda, logistic.init, pseudoc, theta.init, costs,
   verbose = FALSE)
 }
 \arguments{
-\item{G}{Genomic features.}
+\item{Feat}{Genomic features (G).}
 
-\item{E}{Binary values of outlier status.}
+\item{Out}{Binary values of outlier status (E).}
 
 \item{lambda}{Selected lambda.}
 
@@ -38,23 +38,23 @@ Best estimate of beta and theta, final multivariate logistic
 }
 \examples{
 dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-        package = "RIVERpkg"), ZscoreThrd=1.5)
-G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
-E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
-theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
-costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
+        package = "RIVER"), ZscoreThrd=1.5)
+Feat <- scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+Out <- as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
+theta.init=matrix(c(.99, .01, .3, .7), nrow=2)
+costs <- c(100, 10, 1, .1, .01, 1e-3, 1e-4)
+logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
         alpha = 0, nfolds=10)
-em.all.res <- integratedEM(G, E, lambda=cv.all.ll$lambda.min,
-        logistic.init=cv.all.ll$glmnet.fit, pseudoc=50, theta=theta_init,
+emModelAll <- integratedEM(Feat, Out, lambda=logisticAllCV$lambda.min,
+        logistic.init=logisticAllCV$glmnet.fit, pseudoc=50, theta=theta.init,
         costs, verbose=FALSE)
 
 }
 \seealso{
-\code{\link{getFRgivenG}}, \code{\link{getFRPosteriors}},
+\code{\link{getFuncRv_Feat}}, \code{\link{getFuncRvPosteriors}},
         \code{\link{mleTheta}}, \code{\link{mleBeta}},
         \code{\link[glmnet]{cv.glmnet}},
-        and \url{https://github.com/ipw012/RIVERpkg}
+        and \url{https://github.com/ipw012/RIVER}
 }
 \author{
 Yungil Kim, \email{ipw012@gmail.com}

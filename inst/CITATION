@@ -1,4 +1,4 @@
-citHeader("To cite RIVERpkg in publications use:")
+citHeader("To cite RIVER in publications use:")
 
 citEntry(entry = "Article",
   title        = "The impact of rare variation on gene expression across tissues",

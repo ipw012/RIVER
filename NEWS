@@ -1,0 +1,44 @@
+RIVER v0.99.4 (Release date: 2017-03-20)
+=============
+Changes:
+* Change the name of R package from "RIVERpkg" to "RIVER"
+* Remove a plotAUC function
+* Change names of object, arguments, and functions having mathematical symbols into descriptive terms
+
+
+
+RIVERpkg v0.99.3 (Release date: 2017-02-20)
+=============
+Changes:
+* Switch zcat into gzfile
+* Update roxygen version
+
+
+
+RIVERpkg v0.99.2 (Release date: 2017-02-20)
+=============
+Changes:
+* Chagne R version from 3.3.1 to 3.3.2
+
+
+
+RIVERpkg v0.99.1 (Release date: 2017-02-01)
+=============
+Changes:
+* Revise evaRIVER.R and add simulated_N2pairs.Rdate into the package to obtain feature-invariant N2 pairs
+* Revise an evaluation approach for fully evaluating models
+* Incorporate ExpressionSet class into the package as an input
+
+
+
+RIVERpkg v0.99.0 (Release date: 2017-01-09)
+=============
+Changes:
+* Revise a version of RIVERpkg as 0.99.0 in order to submit the package
+
+
+
+RIVERpkg v0.1.0 (Release date: 2017-01-06)
+=============
+Changes:
+* First version of RIVERpkg was generated

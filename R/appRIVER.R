@@ -4,7 +4,7 @@
 #'         probabilities of FR for downstream analyses.
 #'
 #' @param dataInput An object of ExpressionSet class which contains input data
-#'         required for all functions in RIVERpkg including genomic features,
+#'         required for all functions in RIVER including genomic features,
 #'         outlier status, and N2 pairs.
 #' @param pseudoc Pseudo count.
 #' @param theta_init Initial values of theta.
@@ -26,7 +26,7 @@
 #'
 #' @examples
 #' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-#'         package = "RIVERpkg"), ZscoreThrd=1.5)
+#'         package = "RIVER"), ZscoreThrd=1.5)
 #' postprobs <- appRIVER(dataInput, verbose=TRUE)
 #'
 #' @export
@@ -34,31 +34,31 @@
 appRIVER <- function(dataInput, pseudoc=50, theta_init=matrix(c(.99, .01, .3, .7), nrow=2),
                      costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4), verbose=FALSE) {
   ## Extract required data for evaRIVER
-  GAll = t(exprs(dataInput)) # all genomic features (G)
-  EAll = as.numeric(unlist(dataInput$Outlier))-1 # all outlier status (E)
+  FeatAll = t(exprs(dataInput)) # all genomic features (G)
+  OutAll = as.numeric(unlist(dataInput$Outlier))-1 # all outlier status (E)
 
   ## Search a best lambda from a multivariate logistic regression with outlier status
   ##        with 10 cross-validation
-  cv.all.ll = cv.glmnet(GAll, as.vector(EAll), lambda=costs,
+  logisticAllCV = cv.glmnet(FeatAll, as.vector(OutAll), lambda=costs,
                         family="binomial", alpha=0, nfolds=10) # GAM
-  if (verbose) cat(' *** best lambda = ',cv.all.ll$lambda.min,' *** \n\n', sep='')
+  if (verbose) cat(' *** best lambda = ',logisticAllCV$lambda.min,' *** \n\n', sep='')
 
   ## Compute P(FR=1 | G)
-  pp_all = predict(cv.all.ll, GAll, s="lambda.min", type="response")
+  postporbGAM = predict(logisticAllCV, FeatAll, s="lambda.min", type="response")
 
   ## Train RIVER with all data for application
-  em.all.res <- integratedEM(GAll, EAll, cv.all.ll$lambda.min, cv.all.ll$glmnet.fit,
+  emModelAll <- integratedEM(FeatAll, OutAll, logisticAllCV$lambda.min, logisticAllCV$glmnet.fit,
                              pseudoc, theta_init, costs, verbose)
 
   ## Compute P(FR | G, E)
-  train.post = testPosteriors(GAll, EAll, em.all.res)
+  postprobRIVER = testPosteriors(FeatAll, OutAll, emModelAll)
 
   ## Output: postprobs
-  postprobs=list(indiv_name=unlist(strsplit(rownames(GAll),":"))[seq(1,2*nrow(GAll),by=2)],
-       gene_name=unlist(strsplit(rownames(GAll),":"))[seq(2,2*nrow(GAll),by=2)],
-       RIVER_posterior=train.post$posterior[,2],
-       GAM_posterior=as.numeric(pp_all),
-       fitRIVER=em.all.res)
+  postprobs=list(indiv_name=unlist(strsplit(rownames(FeatAll),":"))[seq(1,2*nrow(FeatAll),by=2)],
+       gene_name=unlist(strsplit(rownames(FeatAll),":"))[seq(2,2*nrow(FeatAll),by=2)],
+       RIVER_posterior=postprobRIVER$posterior[,2],
+       GAM_posterior=as.numeric(postporbGAM),
+       fitRIVER=emModelAll)
   class(postprobs) = "appl"
   return(postprobs)
 }

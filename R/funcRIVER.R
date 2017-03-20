@@ -1,39 +1,42 @@
 #' Posterior probabilities of FR given G and E.
 #'
-#' \code{getFRPosteriors} computes posterior probabilities of FR (functionality
-#'         of regulatory variant) given G (genomic annotations) and E (outlier
-#'         status) with current estimate of beta (parameters between FR and G)
+#' \code{getFuncRvPosteriors} computes posterior probabilities of functionality
+#'         of regulatory variant (FR) given genomic features (G) and outlier
+#'         status (E) with current estimate of beta (parameters between FR and G)
 #'         and theta (parameters between FR and E).
 #'
-#' @param E Binary values of outlier status.
-#' @param p.FR.givenG P(FR | G, beta) from \code{getFRgivenG}.
+#' @param Out Binary values of outlier status (E).
+#' @param probFuncRv_Feat probabilities of FR given genomic features and estimated
+#'         beta, P(FR | G, beta), from \code{getFuncRv_Feat}.
 #' @param theta Current estimate of theta.
 #'
-#' @return P(FR | G, E, beta, theta) and probable status of FR.
+#' @return posterior probabilities of FR (P(FR | G, E, beta, theta)) and probable
+#'         status of FR.
 #'
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
 #' @examples
 #' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-#'         package = "RIVERpkg"), ZscoreThrd=1.5)
-#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
-#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
-#' theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
-#' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
+#'         package = "RIVER"), ZscoreThrd=1.5)
+#' Feat <- scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' Out <- as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
+#' theta.init<-matrix(c(.99, .01, .3, .7), nrow=2)
+#' costs<-c(100, 10, 1, .1, .01, 1e-3, 1e-4)
+#' logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
 #'         alpha=0, nfolds=10)
-#' p.FR.givenG = getFRgivenG(G, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
-#' posteriors = getFRPosteriors(E, p.FR.givenG, theta=theta_init)
+#' probFuncRv_Feat <- getFuncRv_Feat(Feat, logisticAllCV$glmnet.fit,
+#'         logisticAllCV$lambda.min)
+#' posteriors <- getFuncRvPosteriors(Out, probFuncRv_Feat, theta=theta.init)
 #'
 #' @export
 
-getFRPosteriors <- function(E, p.FR.givenG, theta) {
-  p.e.FR.d1 = matrix(NA,length(E), 2)
-  p.e.d1 = matrix(NA, length(E), 1)
+getFuncRvPosteriors <- function(Out, probFuncRv_Feat, theta) {
+  probOut_FuncRv <- matrix(NA,length(Out), 2)
+  probOut <- matrix(NA, length(Out), 1)
 
-  p.e.FR.d1 = theta[E+1,]
-  p.e.d1 = rowSums(p.e.FR.d1*cbind(1.0-p.FR.givenG,p.FR.givenG))
-  post = p.e.FR.d1 * c(1-p.FR.givenG, p.FR.givenG) / c(p.e.d1, p.e.d1)
+  probOut_FuncRv <- theta[Out+1,]
+  probOut <- rowSums(probOut_FuncRv*cbind(1.0-probFuncRv_Feat,probFuncRv_Feat))
+  post <- probOut_FuncRv * c(1-probFuncRv_Feat, probFuncRv_Feat) / c(probOut, probOut)
 
   list(posterior=post, mle = max.col(post)-1)
 }
@@ -44,8 +47,8 @@ getFRPosteriors <- function(E, p.FR.givenG, theta) {
 #'         between FR (functionality of regulatory variant) and E (outlier
 #'         status); Naive-Bayes).
 #'
-#' @param E Binary values of outlier status.
-#' @param FR Soft-assignments of FR from E-step
+#' @param Out Binary values of outlier status (E).
+#' @param FuncRv Soft-assignments of FR from E-step
 #' @param pseudocount Pseudo count.
 #'
 #' @return MLE of theta
@@ -54,27 +57,27 @@ getFRPosteriors <- function(E, p.FR.givenG, theta) {
 #'
 #' @examples
 #' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-#'         package = "RIVERpkg"), ZscoreThrd=1.5)
-#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
-#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
-#' theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
-#' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
+#'         package = "RIVER"), ZscoreThrd=1.5)
+#' Feat <- scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' Out <- as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
+#' theta.init <- matrix(c(.99, .01, .3, .7), nrow=2)
+#' costs <- c(100, 10, 1, .1, .01, 1e-3, 1e-4)
+#' logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
 #'         alpha = 0, nfolds=10)
-#' p.FR.givenG = getFRgivenG(G, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
-#' posteriors = getFRPosteriors(E, p.FR.givenG, theta=theta_init)
-#' theta.cur = mleTheta(E, FR=posteriors$posterior, pseudoc=50)
+#' probFuncRv_Feat <- getFuncRv_Feat(Feat, logisticAllCV$glmnet.fit, logisticAllCV$lambda.min)
+#' posteriors <- getFuncRvPosteriors(Out, probFuncRv_Feat, theta=theta.init)
+#' thetaCur <- mleTheta(Out, FuncRv=posteriors$posterior, pseudoc=50)
 #'
 #' @export
 
-mleTheta <- function(E, FR, pseudocount) {
-  ct = matrix(NA, 2, 2)
-  ct[1,1] = sum((E==0)*FR[,1])
-  ct[1,2] = sum((E==0)*FR[,2])
-  ct[2,1] = sum((E==1)*FR[,1])
-  ct[2,2] = sum((E==1)*FR[,2])
-  ct = ct + pseudocount
-  return(ct/rbind(colSums(ct), colSums(ct)))
+mleTheta <- function(Out, FuncRv, pseudocount) {
+  countOut <- matrix(NA, 2, 2)
+  countOut[1,1] <- sum((Out==0)*FuncRv[,1])
+  countOut[1,2] <- sum((Out==0)*FuncRv[,2])
+  countOut[2,1] <- sum((Out==1)*FuncRv[,1])
+  countOut[2,2] <- sum((Out==1)*FuncRv[,2])
+  countOut = countOut + pseudocount
+  return(countOut/rbind(colSums(countOut), colSums(countOut)))
 }
 
 #' Maximum likelihoood estimate of beta.
@@ -83,8 +86,8 @@ mleTheta <- function(E, FR, pseudocount) {
 #'         between FR (functionality of regulatory variant) and G (genomic
 #'         annotations); multivariate logistic regression).
 #'
-#' @param G Genomic features
-#' @param FR Soft-assignments of FR from E-step
+#' @param Feat Genomic features (G)
+#' @param FuncRv Soft-assignments of FR from E-step
 #' @param costs Candidate penalty parameter values for L2-regularization within
 #'         logistic regression.
 #'
@@ -97,56 +100,56 @@ mleTheta <- function(E, FR, pseudocount) {
 #'
 #' @examples
 #' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-#'         package = "RIVERpkg"), ZscoreThrd=1.5)
-#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
-#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
-#' theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
-#' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
+#'         package = "RIVER"), ZscoreThrd=1.5)
+#' Feat <- scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' Out <- as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
+#' theta.init <- matrix(c(.99, .01, .3, .7), nrow=2)
+#' costs <- c(100, 10, 1, .1, .01, 1e-3, 1e-4)
+#' logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
 #'         alpha=0, nfolds=10)
-#' p.FR.givenG = getFRgivenG(G, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
-#' posteriors = getFRPosteriors(E, p.FR.givenG, theta=theta_init)
-#' logistic.cur = mleBeta(G, FR=posteriors$posterior, costs)
+#' probFuncRv_Feat <- getFuncRv_Feat(Feat, logisticAllCV$glmnet.fit, logisticAllCV$lambda.min)
+#' posteriors <- getFuncRvPosteriors(Out, probFuncRv_Feat, theta=theta.init)
+#' logistic.cur <- mleBeta(Feat, FuncRv=posteriors$posterior, costs)
 #'
 #' @seealso \code{\link[glmnet]{glmnet}}
 #'
 #' @export
 
-mleBeta <- function(G, FR, costs) {
-  glmnet(G, FR, lambda=costs, family="binomial", alpha = 0)
+mleBeta <- function(Feat, FuncRv, costs) {
+  glmnet(Feat, FuncRv, lambda=costs, family="binomial", alpha = 0)
 }
 
 #' Posterior probabilities of FR given G
 #'
-#' \code{getFRgivenG} computes posterior probabilities of FR (functionality of
-#'         regulatory variant) given G (genomic annotations) and current estimate
+#' \code{getFuncRv_Feat} computes posterior probabilities of FR (functionality of
+#'         regulatory variant) given G (genomic features) and current estimate
 #'         of beta (parameters between FR and G).
 #'
-#' @param G Genomic features
+#' @param Feat Genomic features (G)
 #' @param logistic.model Logistic regression model with current estimate of beta
 #' @param lambda Selected lambda
 #'
-#' @return P(FR | G)
+#' @return probabilities of FR given genomic features, P(FR | G)
 #'
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
 #' @examples
 #' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-#'         package = "RIVERpkg"), ZscoreThrd=1.5)
-#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
-#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
-#' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
+#'         package = "RIVER"), ZscoreThrd=1.5)
+#' Feat <- scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' Out <- as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
+#' costs <- c(100, 10, 1, .1, .01, 1e-3, 1e-4)
+#' logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
 #'         alpha = 0, nfolds=10)
-#' p.FR.givenG = getFRgivenG(G, logistic.model=cv.all.ll$glmnet.fit,
-#'         lambda=cv.all.ll$lambda.min)
+#' probFuncRv_Feat <- getFuncRv_Feat(Feat, logistic.model=logisticAllCV$glmnet.fit,
+#'         lambda=logisticAllCV$lambda.min)
 #'
 #' @seealso \code{\link{predict}}
 #'
 #' @export
 
-getFRgivenG <- function(G, logistic.model, lambda) {
-  predict(logistic.model, G, s=lambda, type="response")
+getFuncRv_Feat <- function(Feat, logistic.model, lambda) {
+  predict(logistic.model, Feat, s=lambda, type="response")
 }
 
 #' Test posterior probabilities of FR given G and E
@@ -156,35 +159,37 @@ getFRgivenG <- function(G, logistic.model, lambda) {
 #'         status) with estimate of beta (parameters between FR and G) and
 #'         theta (parameters between FR and E).
 #'
-#' @param G Genomic features
-#' @param E Binary values of outlier status.
-#' @param em.results Estimated parameters including beta and theta via EM and
+#' @param Feat Genomic features (G)
+#' @param Out Binary values of outlier status (E).
+#' @param emModel Estimated parameters including beta and theta via EM and
 #'         selected lambdas
 #'
-#' @return P(FR | G, E, beta, theta) and probable status of FR.
+#' @return test posterior probabilities of FR given new outlier status (E)
+#'         and genomic features (G), P(FR | G, E, beta, theta), and probable
+#'         status of FR.
 #'
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
 #' @examples
 #' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-#'         package = "RIVERpkg"), ZscoreThrd=1.5)
-#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
-#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
-#' theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
-#' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
+#'         package = "RIVER"), ZscoreThrd=1.5)
+#' Feat <- scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' Out <- as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
+#' theta.init <- matrix(c(.99, .01, .3, .7), nrow=2)
+#' costs <- c(100, 10, 1, .1, .01, 1e-3, 1e-4)
+#' logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
 #'         alpha = 0, nfolds=10)
-#' em.all.res <- integratedEM(G, E, cv.all.ll$lambda.min, cv.all.ll$glmnet.fit,
-#'         pseudoc=50, theta_init, costs, verbose=FALSE)
-#' train.post = testPosteriors(G, E, em.results=em.all.res)
+#' emModelAll <- integratedEM(Feat, Out, logisticAllCV$lambda.min, logisticAllCV$glmnet.fit,
+#'         pseudoc=50, theta.init, costs, verbose=FALSE)
+#' trainedpost <- testPosteriors(Feat, Out, emModel=emModelAll)
 #'
-#' @seealso \code{\link{getFRgivenG}} and \code{\link{getFRPosteriors}}
+#' @seealso \code{\link{getFuncRv_Feat}} and \code{\link{getFuncRvPosteriors}}
 #'
 #' @export
 
-testPosteriors <- function(G, E, em.results) {
-  gFR = getFRgivenG(G, em.results$logistic.model, em.results$lambda)
-  getFRPosteriors(E, gFR, em.results$theta)
+testPosteriors <- function(Feat, Out, emModel) {
+  probFuncRV_Feat <- getFuncRv_Feat(Feat, emModel$logistic.model, emModel$lambda)
+  getFuncRvPosteriors(Out, probFuncRV_Feat, emModel$theta)
 }
 
 #' An iterative expectation-maximization algorithm for RIVER
@@ -192,8 +197,8 @@ testPosteriors <- function(G, E, em.results) {
 #' \code{integratedEM} iteratively executes e-step and m-step until it
 #'         converges. This is a main function of RIVER.
 #'
-#' @param G Genomic features.
-#' @param E Binary values of outlier status.
+#' @param Feat Genomic features (G).
+#' @param Out Binary values of outlier status (E).
 #' @param lambda Selected lambda.
 #' @param logistic.init Smart initialization of beta (parameters between
 #'         FR and G) from estimate of beta with E via multivariate logistic
@@ -210,50 +215,52 @@ testPosteriors <- function(G, E, em.results) {
 #'
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #'
-#' @seealso \code{\link{getFRgivenG}}, \code{\link{getFRPosteriors}},
+#' @seealso \code{\link{getFuncRv_Feat}}, \code{\link{getFuncRvPosteriors}},
 #'         \code{\link{mleTheta}}, \code{\link{mleBeta}},
 #'         \code{\link[glmnet]{cv.glmnet}},
-#'         and \url{https://github.com/ipw012/RIVERpkg}
+#'         and \url{https://github.com/ipw012/RIVER}
 #'
 #' @examples
 #' dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-#'         package = "RIVERpkg"), ZscoreThrd=1.5)
-#' G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
-#' E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
-#' theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
-#' costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-#' cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
+#'         package = "RIVER"), ZscoreThrd=1.5)
+#' Feat <- scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+#' Out <- as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
+#' theta.init=matrix(c(.99, .01, .3, .7), nrow=2)
+#' costs <- c(100, 10, 1, .1, .01, 1e-3, 1e-4)
+#' logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
 #'         alpha = 0, nfolds=10)
-#' em.all.res <- integratedEM(G, E, lambda=cv.all.ll$lambda.min,
-#'         logistic.init=cv.all.ll$glmnet.fit, pseudoc=50, theta=theta_init,
+#' emModelAll <- integratedEM(Feat, Out, lambda=logisticAllCV$lambda.min,
+#'         logistic.init=logisticAllCV$glmnet.fit, pseudoc=50, theta=theta.init,
 #'         costs, verbose=FALSE)
 #'
 #' @export
 
-integratedEM <- function(G, E, lambda, logistic.init, pseudoc, theta.init, costs,
+integratedEM <- function(Feat, Out, lambda, logistic.init, pseudoc, theta.init, costs,
                          verbose=FALSE) {
   theta.cur = theta.init
   beta.cur = logistic.init$beta[,which(logistic.init$lambda == lambda)]
   logistic.cur = logistic.init
 
   steps = 1
-  while(TRUE) {
+  maxIter = 1000
+  converged = 0
+  for (iter in 1:maxIter) {
     if (verbose) cat(' *** RIVER: EM step ',steps,'\n',sep="")
 
     ## E-step:
     ## Compute expected posterior probabilities given current parameters and data
-    p.FR.givenG = getFRgivenG(G, logistic.cur, lambda)
-    posteriors = getFRPosteriors(E, p.FR.givenG, theta.cur)
+    probFuncRv_Feat = getFuncRv_Feat(Feat, logistic.cur, lambda)
+    posteriors = getFuncRvPosteriors(Out, probFuncRv_Feat, theta.cur)
     if (verbose) cat('     E-step: Top 10 % Threshold of expected P(FR=1 | G, E): ',
                      round(quantile(posteriors$posterior[,2], .9),4),'\n',sep='')
 
     ## M-step:
     ## Update theta and beta
     theta.old = theta.cur
-    theta.cur = mleTheta(E, posteriors$posterior, pseudoc) # ML estimate of theta
+    theta.cur = mleTheta(Out, posteriors$posterior, pseudoc) # ML estimate of theta
 
     beta.old = beta.cur
-    logistic.cur = mleBeta(G, posteriors$posterior, costs) # ML estimate of beta
+    logistic.cur = mleBeta(Feat, posteriors$posterior, costs) # ML estimate of beta
     beta.cur = logistic.cur$beta[,which(logistic.cur$lambda == lambda)]
 
     if (verbose) cat('     M-step: norm(theta difference) = ',
@@ -265,11 +272,16 @@ integratedEM <- function(G, E, lambda, logistic.init, pseudoc, theta.init, costs
     ## Check convergence
     if ((norm(matrix(beta.cur) - matrix(beta.old)) < 1e-3) &
         (norm(theta.cur - theta.old) < 1e-3)) {
-      if (verbose) cat(" ::: EM iteration is terminated (it converges within
-                       the predefined tolerance, 0.001) ::: \n\n\n",sep="")
+      converged = 1
       break
     }
     steps = steps + 1
+  }
+
+  if (converged == 1) {
+    cat(" ::: EM iteration is terminated since it converges within a predefined tolerance (0.001) ::: \n\n\n",sep="")
+  } else if ((converged == 0) && (iter == maxIter)) {
+    cat(" ::: EM iteration is terminated since it reaches a predefined maximum value (1000) ::: \n\n\n",sep="")
   }
 
   list(logistic.model=logistic.cur, beta=beta.cur, theta=theta.cur,

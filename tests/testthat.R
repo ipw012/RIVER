@@ -1,4 +1,4 @@
 library(testthat)
-library(RIVERpkg)
+library(RIVER)
 
-test_check("RIVERpkg")
+test_check("RIVER")

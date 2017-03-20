@@ -5,7 +5,7 @@
 \title{Get coordinated data from a compressed file for RIVER}
 \usage{
 getData(filename = system.file("extdata", "simulation_RIVER.gz", package =
-  "RIVERpkg"), ZscoreThrd = 1.5)
+  "RIVER"), ZscoreThrd = 1.5)
 }
 \arguments{
 \item{filename}{A full path of a compressed input file that consists of all
@@ -19,7 +19,7 @@ same pre-assigend integers.}
 }
 \value{
 dataInput An object of ExpressionSet class which contains input data
-        required for all functions in RIVERpkg including genomic features,
+        required for all functions in RIVER including genomic features,
         outlier status, and N2 pairs.
 }
 \description{
@@ -30,8 +30,8 @@ dataInput An object of ExpressionSet class which contains input data
         pairs into ExpressionSet class having standardized data structure.
 }
 \examples{
-InputData = getData(filename=system.file("extdata", "simulation_RIVER.gz",
-        package = "RIVERpkg"), ZscoreThrd=1.5)
+InputData <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+        package = "RIVER"), ZscoreThrd=1.5)
 
 }
 \seealso{

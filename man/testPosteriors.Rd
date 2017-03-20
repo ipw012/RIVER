@@ -4,18 +4,20 @@
 \alias{testPosteriors}
 \title{Test posterior probabilities of FR given G and E}
 \usage{
-testPosteriors(G, E, em.results)
+testPosteriors(Feat, Out, emModel)
 }
 \arguments{
-\item{G}{Genomic features}
+\item{Feat}{Genomic features (G)}
 
-\item{E}{Binary values of outlier status.}
+\item{Out}{Binary values of outlier status (E).}
 
-\item{em.results}{Estimated parameters including beta and theta via EM and
+\item{emModel}{Estimated parameters including beta and theta via EM and
 selected lambdas}
 }
 \value{
-P(FR | G, E, beta, theta) and probable status of FR.
+test posterior probabilities of FR given new outlier status (E)
+        and genomic features (G), P(FR | G, E, beta, theta), and probable
+        status of FR.
 }
 \description{
 \code{testPosteriors} computes posterior probabilities of FR (functionality
@@ -25,20 +27,20 @@ P(FR | G, E, beta, theta) and probable status of FR.
 }
 \examples{
 dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-        package = "RIVERpkg"), ZscoreThrd=1.5)
-G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
-E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
-theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
-costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
+        package = "RIVER"), ZscoreThrd=1.5)
+Feat <- scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+Out <- as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
+theta.init <- matrix(c(.99, .01, .3, .7), nrow=2)
+costs <- c(100, 10, 1, .1, .01, 1e-3, 1e-4)
+logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
         alpha = 0, nfolds=10)
-em.all.res <- integratedEM(G, E, cv.all.ll$lambda.min, cv.all.ll$glmnet.fit,
-        pseudoc=50, theta_init, costs, verbose=FALSE)
-train.post = testPosteriors(G, E, em.results=em.all.res)
+emModelAll <- integratedEM(Feat, Out, logisticAllCV$lambda.min, logisticAllCV$glmnet.fit,
+        pseudoc=50, theta.init, costs, verbose=FALSE)
+trainedpost <- testPosteriors(Feat, Out, emModel=emModelAll)
 
 }
 \seealso{
-\code{\link{getFRgivenG}} and \code{\link{getFRPosteriors}}
+\code{\link{getFuncRv_Feat}} and \code{\link{getFuncRvPosteriors}}
 }
 \author{
 Yungil Kim, \email{ipw012@gmail.com}

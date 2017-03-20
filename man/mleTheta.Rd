@@ -4,12 +4,12 @@
 \alias{mleTheta}
 \title{Maximum likelihoood estimate of theta.}
 \usage{
-mleTheta(E, FR, pseudocount)
+mleTheta(Out, FuncRv, pseudocount)
 }
 \arguments{
-\item{E}{Binary values of outlier status.}
+\item{Out}{Binary values of outlier status (E).}
 
-\item{FR}{Soft-assignments of FR from E-step}
+\item{FuncRv}{Soft-assignments of FR from E-step}
 
 \item{pseudocount}{Pseudo count.}
 }
@@ -23,16 +23,16 @@ MLE of theta
 }
 \examples{
 dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-        package = "RIVERpkg"), ZscoreThrd=1.5)
-G = scale(t(Biobase::exprs(dataInput))) # genomic features (G)
-E = as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
-theta_init=matrix(c(.99, .01, .3, .7), nrow=2)
-costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4)
-cv.all.ll = glmnet::cv.glmnet(G, E, lambda=costs, family="binomial",
+        package = "RIVER"), ZscoreThrd=1.5)
+Feat <- scale(t(Biobase::exprs(dataInput))) # genomic features (G)
+Out <- as.vector(as.numeric(unlist(dataInput$Outlier))-1) # outlier status (E)
+theta.init <- matrix(c(.99, .01, .3, .7), nrow=2)
+costs <- c(100, 10, 1, .1, .01, 1e-3, 1e-4)
+logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
         alpha = 0, nfolds=10)
-p.FR.givenG = getFRgivenG(G, cv.all.ll$glmnet.fit, cv.all.ll$lambda.min)
-posteriors = getFRPosteriors(E, p.FR.givenG, theta=theta_init)
-theta.cur = mleTheta(E, FR=posteriors$posterior, pseudoc=50)
+probFuncRv_Feat <- getFuncRv_Feat(Feat, logisticAllCV$glmnet.fit, logisticAllCV$lambda.min)
+posteriors <- getFuncRvPosteriors(Out, probFuncRv_Feat, theta=theta.init)
+thetaCur <- mleTheta(Out, FuncRv=posteriors$posterior, pseudoc=50)
 
 }
 \author{

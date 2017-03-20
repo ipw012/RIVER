@@ -10,7 +10,7 @@ appRIVER(dataInput, pseudoc = 50, theta_init = matrix(c(0.99, 0.01, 0.3,
 }
 \arguments{
 \item{dataInput}{An object of ExpressionSet class which contains input data
-required for all functions in RIVERpkg including genomic features,
+required for all functions in RIVER including genomic features,
 outlier status, and N2 pairs.}
 
 \item{pseudoc}{Pseudo count.}
@@ -38,7 +38,7 @@ A list which contains subject IDs, gene names, posterior
 
 \examples{
 dataInput <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
-        package = "RIVERpkg"), ZscoreThrd=1.5)
+        package = "RIVER"), ZscoreThrd=1.5)
 postprobs <- appRIVER(dataInput, verbose=TRUE)
 
 }

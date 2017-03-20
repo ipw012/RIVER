@@ -15,28 +15,29 @@
 #' @param ZscoreThrd A |Z-score| threshold for defining outlier status of samples
 #'
 #' @return dataInput An object of ExpressionSet class which contains input data
-#'         required for all functions in RIVERpkg including genomic features,
+#'         required for all functions in RIVER including genomic features,
 #'         outlier status, and N2 pairs.
 #'
 #' @author Yungil Kim, \email{ipw012@@gmail.com}
 #' @seealso \code{\link[data.table]{fread}}, \code{\link[Biobase]{ExpressionSet}},
 #'
 #' @examples
-#' InputData = getData(filename=system.file("extdata", "simulation_RIVER.gz",
-#'         package = "RIVERpkg"), ZscoreThrd=1.5)
+#' InputData <- getData(filename=system.file("extdata", "simulation_RIVER.gz",
+#'         package = "RIVER"), ZscoreThrd=1.5)
 #'
 #' @export
 
 getData <- function(filename=system.file("extdata", "simulation_RIVER.gz",
-                                         package = "RIVERpkg"), ZscoreThrd=1.5) {
+                                         package = "RIVER"), ZscoreThrd=1.5) {
+  # Only for linux users
   # expData = as.data.frame(fread(paste("zcat ", filename, sep=""),
-  #                               sep='\t', header = TRUE, na.strings = "NA")) # Only for linux users
+  #                               sep='\t', header = TRUE, na.strings = "NA"))
   expData = read.table(gzfile(filename), header = TRUE)
 
-  G = expData[,3:(ncol(expData)-2)] # genomic features
-  rownames(G) = paste(expData[,"SubjectID"], ":",
+  Feat = expData[,3:(ncol(expData)-2)] # genomic features
+  rownames(Feat) = paste(expData[,"SubjectID"], ":",
                       expData[,"GeneName"],sep="") # sample name as SubjectID:GeneName
-  G = as.matrix(t(G)) # feature x sample
+  Feat = as.matrix(t(Feat)) # feature x sample
 
   # outlier status, N2 pairs
   pData = data.frame(Outlier=factor(ifelse(abs(expData[,"Zscore"])>=ZscoreThrd,1,0),
@@ -51,6 +52,6 @@ getData <- function(filename=system.file("extdata", "simulation_RIVER.gz",
                         row.names=c("Outlier","N2pair"))
   phenoData = new("AnnotatedDataFrame",
                   data=pData, varMetadata=metadata)
-  dataInput = ExpressionSet(assayData=G, phenoData=phenoData)
+  dataInput = ExpressionSet(assayData=Feat, phenoData=phenoData)
   return(dataInput)
 }
