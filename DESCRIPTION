@@ -10,7 +10,7 @@ Description: An implementation of a probabilistic modeling framework that jointl
         regulatory variant status then influences whether nearby genes are likely to 
         display outlier levels of gene expression in that person. See the RIVER website 
         for more information, documentation and examples.
-Version: 0.99.4
+Version: 0.99.5
 Authors@R: c(person("Yungil", "Kim", role = c("aut", "cre"), email = "ipw012@gmail.com"),
         person("Damani", "Farhan", role = "ctb", email = "farhand7@gmail.com"),
         person("Alexis", "Battle", role = "aut", email = "ajbattle@cs.jhu.edu"))
