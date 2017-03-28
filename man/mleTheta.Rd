@@ -30,8 +30,8 @@ theta.init <- matrix(c(.99, .01, .3, .7), nrow=2)
 costs <- c(100, 10, 1, .1, .01, 1e-3, 1e-4)
 logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
         alpha = 0, nfolds=10)
-probFuncRv_Feat <- getFuncRv_Feat(Feat, logisticAllCV$glmnet.fit, logisticAllCV$lambda.min)
-posteriors <- getFuncRvPosteriors(Out, probFuncRv_Feat, theta=theta.init)
+probFuncRvFeat <- getFuncRvFeat(Feat, logisticAllCV$glmnet.fit, logisticAllCV$lambda.min)
+posteriors <- getFuncRvPosteriors(Out, probFuncRvFeat, theta=theta.init)
 thetaCur <- mleTheta(Out, FuncRv=posteriors$posterior, pseudoc=50)
 
 }

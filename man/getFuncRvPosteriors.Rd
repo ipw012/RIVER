@@ -4,13 +4,13 @@
 \alias{getFuncRvPosteriors}
 \title{Posterior probabilities of FR given G and E.}
 \usage{
-getFuncRvPosteriors(Out, probFuncRv_Feat, theta)
+getFuncRvPosteriors(Out, probFuncRvFeat, theta)
 }
 \arguments{
 \item{Out}{Binary values of outlier status (E).}
 
-\item{probFuncRv_Feat}{probabilities of FR given genomic features and estimated
-beta, P(FR | G, beta), from \code{getFuncRv_Feat}.}
+\item{probFuncRvFeat}{probabilities of FR given genomic features and estimated
+beta, P(FR | G, beta), from \code{getFuncRvFeat}.}
 
 \item{theta}{Current estimate of theta.}
 }
@@ -33,9 +33,9 @@ theta.init<-matrix(c(.99, .01, .3, .7), nrow=2)
 costs<-c(100, 10, 1, .1, .01, 1e-3, 1e-4)
 logisticAllCV <- glmnet::cv.glmnet(Feat, Out, lambda=costs, family="binomial",
         alpha=0, nfolds=10)
-probFuncRv_Feat <- getFuncRv_Feat(Feat, logisticAllCV$glmnet.fit,
+probFuncRvFeat <- getFuncRvFeat(Feat, logisticAllCV$glmnet.fit,
         logisticAllCV$lambda.min)
-posteriors <- getFuncRvPosteriors(Out, probFuncRv_Feat, theta=theta.init)
+posteriors <- getFuncRvPosteriors(Out, probFuncRvFeat, theta=theta.init)
 
 }
 \author{

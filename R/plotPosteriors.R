@@ -34,7 +34,8 @@ plotPosteriors <- function(postprobs, outliers) {
                          y="probFuncRv_FeatOut",
                          color="outliers")) +
     geom_point(shape=1, size=4) +
-    geom_abline(intercept=0, slope=1, color="darkgray", size=1, linetype=2) +
+    geom_abline(intercept=0, slope=1, color="darkgray",
+                size=1, linetype=2) +
     theme_bw() + xlab("P( FR | G)") + ylab("P( FR | G, E)") +
     scale_color_manual(values=c("dodgerblue","mediumpurple"),
                        name="", breaks=c("0", "1"),

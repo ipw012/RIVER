@@ -51,7 +51,7 @@ emModelAll <- integratedEM(Feat, Out, lambda=logisticAllCV$lambda.min,
 
 }
 \seealso{
-\code{\link{getFuncRv_Feat}}, \code{\link{getFuncRvPosteriors}},
+\code{\link{getFuncRvFeat}}, \code{\link{getFuncRvPosteriors}},
         \code{\link{mleTheta}}, \code{\link{mleBeta}},
         \code{\link[glmnet]{cv.glmnet}},
         and \url{https://github.com/ipw012/RIVER}

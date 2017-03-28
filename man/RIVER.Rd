@@ -16,8 +16,8 @@ The RIVER package provides two applicable functions of RIVER to actual
         required functions for RIVER: evalRIVER, appRIVER, getFRPosteriors,
         mleTheta, mleBeta, getFRgivenG, testPosteriors, and integratedEM.
 }
-\section{getFuncRv_Feat}{
- The \code{getFuncRv_Feat} computes posterior probabilities
+\section{getFuncRvFeat}{
+ The \code{getFuncRvFeat} computes posterior probabilities
         of FR (functionality of regulatory variant) given genomic features (G)
         and current estimate of beta (parameters between FR and G).
 }

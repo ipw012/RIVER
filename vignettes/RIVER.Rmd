@@ -102,17 +102,17 @@ including `evaRIVER` and `appRIVER`, which we are about to show how to use
 them here. We first load simulated data created beforehand for illustration.
     
 ```{r}
-filename = system.file("extdata", "simulation_RIVER.gz", 
-                       package = "RIVER")
-dataInput = getData(filename) # import experimental data
+filename <- system.file("extdata", "simulation_RIVER.gz", 
+                       package="RIVER")
+dataInput <- getData(filename) # import experimental data
 ```
 `getData` combines different resources including genomic features, 
 outlier status of gene expression, and N2 pairs having same rare variants 
 into standardized data structures, called `ExpressionSet` class.
 ```{r}
 print(dataInput)
-Feat = t(Biobase::exprs(dataInput)) # genomic features (G)
-Out = as.numeric(unlist(dataInput$Outlier))-1 # outlier status (E)
+Feat <- t(Biobase::exprs(dataInput)) # genomic features (G)
+Out <- as.numeric(unlist(dataInput$Outlier))-1 # outlier status (E)
 ```
 In the simulated data, an input object `dataInput` consists of 
 18 genomic features and expression outlier status of 6122 samples and 
@@ -146,9 +146,6 @@ evaROC <- evaRIVER(dataInput)
 two AUC values from *RIVER* and *GAM*, specificity and sensitivity 
 measures from the two models, and p-value of comparing the two AUC values. 
 ```{r}
-# cat('AUC (GAM-genomic annotation model) = ',round(evaROC@GAM_auc,3),'\n')
-# cat('AUC (RIVER) = ',round(evaROC@RIVER_auc,3),'\n')
-# cat('P-value ',format.pval(evaROC@pvalue, digits=2, eps=0.001),'***\n')
 cat('AUC (GAM-genomic annotation model) = ', round(evaROC$GAM_auc,3), '\n')
 cat('AUC (RIVER) = ', round(evaROC$RIVER_auc,3), '\n')
 cat('P-value ', format.pval(evaROC$pvalue, digits=2, eps=0.001), '***\n')
@@ -170,7 +167,8 @@ legend(0.7,0.2,c("RIVER","GAM"), lty=c(1,1), lwd=c(2,2),
        pt.cex=1.2, bty="n")
 title(main=paste("AUC: RIVER = ", round(evaROC$RIVER_auc,3), 
                  ", GAM = ", round(evaROC$GAM_auc,3), 
-                 ", P = ", format.pval(evaROC$pvalue, digits=2, eps=0.001),sep=""))
+                 ", P = ", format.pval(evaROC$pvalue, digits=2, 
+                                       eps=0.001),sep=""))
 ```
 Each ROC curve from either *RIVER* or *GAM* is computed by 
 comparing the posterior probability given available data 
@@ -191,7 +189,7 @@ for further use.
 Probabilities of rare variants being functional from *RIVER* and *GAM* 
 for a few samples are shown below:
 ```{r}
-example_probs = data.frame(Subject=postprobs$indiv_name, 
+example_probs <- data.frame(Subject=postprobs$indiv_name, 
                            Gene=postprobs$gene_name, 
                            RIVERpp=postprobs$RIVER_posterior, 
                            GAMpp=postprobs$GAM_posterior)
@@ -232,9 +230,9 @@ You can simply observe how the entire steps of evaluating models including
 both *RIVER* and *GAM* proceed by using `evaRIVER` with `verbose=TRUE`:
 
 ```{r}
-filename = system.file("extdata", "simulation_RIVER.gz", 
-                       package = "RIVER")
-dataInput = getData(filename) # import experimental data
+filename <- system.file("extdata", "simulation_RIVER.gz", 
+                       package="RIVER")
+dataInput <- getData(filename) # import experimental data
 evaROC <- evaRIVER(dataInput, pseudoc=50, 
                    theta_init=matrix(c(.99, .01, .3, .7), nrow=2), 
                    costs=c(100, 10, 1, .1, .01, 1e-3, 1e-4), 
@@ -312,7 +310,7 @@ including genomic features from various genomic annotations, Z-scores
 from gene expression, and a list of N2 pairs based on WGS, contains 
 all the information.
 ```{r}
-filename = system.file("extdata", "simulation_RIVER.gz", 
+filename <- system.file("extdata", "simulation_RIVER.gz", 
                        package = "RIVER")
 system(paste('zcat ', filename, " | head  -2", sep=""), 
        ignore.stderr=TRUE)
@@ -333,7 +331,7 @@ into `getData` which generates a `ExpressionSet` class object
 (`YourInputToRIVER`) with all necessary information for running RIVER 
 with your own data. 
 ```{r}
-YourInputToRIVER = getData(filename) # import experimental data
+YourInputToRIVER <- getData(filename) # import experimental data
 ```
 For our paper, genomic features were generated from various genomic annotations 
 including conservation scores like Gerp, chromatin states from chromHMM or segway, 
@@ -360,7 +358,7 @@ repository for packages. `R` can be installed on any operating system from
 [CRAN](https://cran.r-project.org/) after which you can install `RIVER` 
 by using the following commands in your `R` session:
 
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 ## try http:// if https:// URLs are not supported
 source("https://bioconductor.org/biocLite.R")
 biocLite("RIVER")
@@ -376,7 +374,7 @@ was compiled:
 ```{r}
 ## Session info
 library('devtools')
-options(width = 120)
+options(width=120)
 session_info()
 ```
 

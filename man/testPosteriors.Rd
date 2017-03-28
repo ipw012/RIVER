@@ -40,7 +40,7 @@ trainedpost <- testPosteriors(Feat, Out, emModel=emModelAll)
 
 }
 \seealso{
-\code{\link{getFuncRv_Feat}} and \code{\link{getFuncRvPosteriors}}
+\code{\link{getFuncRvFeat}} and \code{\link{getFuncRvPosteriors}}
 }
 \author{
 Yungil Kim, \email{ipw012@gmail.com}

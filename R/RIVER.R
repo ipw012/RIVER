@@ -7,7 +7,7 @@
 #'         required functions for RIVER: evalRIVER, appRIVER, getFRPosteriors,
 #'         mleTheta, mleBeta, getFRgivenG, testPosteriors, and integratedEM.
 #'
-#' @section getFuncRv_Feat: The \code{getFuncRv_Feat} computes posterior probabilities
+#' @section getFuncRvFeat: The \code{getFuncRvFeat} computes posterior probabilities
 #'         of FR (functionality of regulatory variant) given genomic features (G)
 #'         and current estimate of beta (parameters between FR and G).
 #' @section getFuncRvPosteriors: The \code{getFuncRvPosteriors} computes posterior
@@ -40,13 +40,12 @@
 #'
 #' @docType package
 #' @name RIVER
-#' @import dplyr pROC ggplot2
-#' @rawNamespace import(glmnet, except = "auc")
-#' @importFrom data.table fread
+#' @import ggplot2
+#' @importFrom pROC roc roc.test
+#' @importFrom glmnet glmnet cv.glmnet
 #' @importFrom Biobase ExpressionSet exprs sampleNames
 #' @importFrom methods new
 #' @importFrom graphics abline legend lines par plot title
 #' @importFrom stats predict quantile sd
-#' @importFrom glmnet cv.glmnet
 #' @importFrom utils read.table
 NULL

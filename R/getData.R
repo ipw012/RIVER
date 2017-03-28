@@ -30,28 +30,32 @@
 getData <- function(filename=system.file("extdata", "simulation_RIVER.gz",
                                          package = "RIVER"), ZscoreThrd=1.5) {
   # Only for linux users
-  # expData = as.data.frame(fread(paste("zcat ", filename, sep=""),
+  # expData <- as.data.frame(fread(paste("zcat ", filename, sep=""),
   #                               sep='\t', header = TRUE, na.strings = "NA"))
-  expData = read.table(gzfile(filename), header = TRUE)
+  expData <- read.table(gzfile(filename), header=TRUE)
 
-  Feat = expData[,3:(ncol(expData)-2)] # genomic features
-  rownames(Feat) = paste(expData[,"SubjectID"], ":",
-                      expData[,"GeneName"],sep="") # sample name as SubjectID:GeneName
-  Feat = as.matrix(t(Feat)) # feature x sample
+  Feat <- expData[,3:(ncol(expData)-2)] # genomic features
+  # sample name as SubjectID:GeneName
+  rownames(Feat) <- paste(expData[,"SubjectID"], ":",
+                      expData[,"GeneName"],sep="")
+  Feat <- as.matrix(t(Feat)) # feature x sample
 
   # outlier status, N2 pairs
-  pData = data.frame(Outlier=factor(ifelse(abs(expData[,"Zscore"])>=ZscoreThrd,1,0),
-                                    levels=c(0,1)),
-                     N2pair=factor(expData[,"N2pair"],
-                                   levels=unique(expData[,"N2pair"])))
-  rownames(pData) = paste(expData[,"SubjectID"],":",expData[,"GeneName"],sep="")
+  pData <-
+    data.frame(Outlier=factor(ifelse(abs(expData[,"Zscore"])>=ZscoreThrd,1,0),
+                              levels=c(0,1)),
+               N2pair=factor(expData[,"N2pair"],
+                             levels=unique(expData[,"N2pair"])))
+  rownames(pData) <-
+    paste(expData[,"SubjectID"],":",expData[,"GeneName"],sep="")
 
   # descrition of outlier status and N2 pairs
-  metadata = data.frame(labelDescription=c("Outlier status based on Z-scores",
-                                           "Pairs of samples having same rare variants"),
-                        row.names=c("Outlier","N2pair"))
-  phenoData = new("AnnotatedDataFrame",
-                  data=pData, varMetadata=metadata)
-  dataInput = ExpressionSet(assayData=Feat, phenoData=phenoData)
+  metadata <-
+    data.frame(labelDescription=c("Outlier status based on Z-scores",
+                                  "Pairs of samples having same rare variants"),
+               row.names=c("Outlier","N2pair"))
+  phenoData <- new("AnnotatedDataFrame",
+                   data=pData, varMetadata=metadata)
+  dataInput <- ExpressionSet(assayData=Feat, phenoData=phenoData)
   return(dataInput)
 }
