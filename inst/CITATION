@@ -3,12 +3,12 @@ citHeader("To cite RIVER in publications use:")
 citEntry(entry = "Article",
   title        = "The impact of rare variation on gene expression across tissues",
   author       = personList(as.person("Xin Li"), as.person("Yungil Kim"), as.person("Emily K. Tsang"), as.person("Joe R. Davis"), as.person("Farhan N. Damani"), as.person("Colby Chiang"), as.person("Zachary Zappala"), as.person("Benjamin J. Strober"), as.person("Alexandra J. Scott"), as.person("Andrea Ganna"), as.person("Jason Merker"), as.person("GTEx Consortium"), as.person("Ira M. Hall"), as.person("Alexis Battle")), as.person("Stephen B. Montgomery"),
-  year         = "2016",
-  url          = "http://biorxiv.org/content/early/2016/09/09/074443",
-  journal      = "bioRxiv",
+  year         = "2017",
+  url          = "https://www.nature.com/articles/nature24267",
+  journal      = "Nature",
   textVersion  =
-paste("Xin Li, Yungil Kim, Emily K. Tsang, Joe R. Davis, Farhan N. Damani, Colby Chiang, Zachary Zappala, Benjamin J. Strober, Alexandra J. Scott, Andrea Ganna, Jason Merker, GTEx Consortium, Ira M. Hall, Alexis Battle, Stephen B. Montgomery (2016)",
+paste("Xin Li, Yungil Kim, Emily K. Tsang, Joe R. Davis, Farhan N. Damani, Colby Chiang, Zachary Zappala, Benjamin J. Strober, Alexandra J. Scott, Andrea Ganna, Jason Merker, GTEx Consortium, Ira M. Hall, Alexis Battle, Stephen B. Montgomery",
         "The impact of rare variation on gene expression across tissues",
-        "bioRxiv, doi: https://doi.org/10.1101/074443",
-        "URL: http://biorxiv.org/content/early/2016/09/09/074443")
+        "ature 550, 239-243 (2017), doi:10.1038/nature24267",
+        "URL: https://www.nature.com/articles/nature24267")
 )
