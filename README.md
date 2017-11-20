@@ -11,7 +11,7 @@ For further details of a list of genomic annotations used for constructing featu
 
 # Installation
 
-Get most recent version of R (>= 3.3.2) from [CRAN](http://cran.r-project.org/).
+Get most recent version of R (>= 3.4) from [CRAN](http://cran.r-project.org/).
 
 ```R
 ## try http:// if https:// URLs are not supported
@@ -28,19 +28,7 @@ Below is the citation output from using `citation('RIVER')` in R. __Please run t
 
 To cite the `RIVER` package in publications use:
 
-Xin Li, Yungil Kim, Emily K. Tsang, Joe R. Davis, Farhan N. Damani, Colby Chiang, Zachary Zappala, Benjamin J. Strober, Alexandra J. Scott, Andrea Ganna, Jason Merker, GTEx Consortium, Ira M. Hall, Alexis Battle, Stephen B. Montgomery (2016), "The impact of rare variation on gene expression across tissues", doi: https://doi.org/10.1101/074443, (URL: https://doi.org/10.1101/074443), <URL: http://biorxiv.org/content/early/2016/09/09/074443>.
-
-A BibTeX entry for LaTeX users is
-
-@article {Li074443,
-	author = {Li, Xin and Kim, Yungil and Tsang, Emily K. and Davis, Joe R. and Damani, Farhan N. and Chiang, Colby and Zappala, Zachary and Strober, Benjamin J. and Scott, Alexandra J. and Ganna, Andrea and Merker, Jason and , and Hall, Ira M. and Battle, Alexis and Montgomery, Stephen B.},
-	title = {The impact of rare variation on gene expression across tissues},
-	year = {2016},
-	doi = {10.1101/074443},
-	publisher = {Cold Spring Harbor Labs Journals},
-	journal = {bioRxiv},
-	URL = {http://biorxiv.org/content/early/2016/09/09/074443}
-}
+Li, X , Kim, Y , Tsang, EK , Davis, JR , Damani, FN, Chiang, C, Hess, GT, Zappala, Z, Strober, BJ, Scott, AJ, Li, A, Ganna, A, Bassik, MC, Merker, J, GTEx Consortium, Hall, IM, Battle, A , Montgomery, SB , "The impact of rare variation on gene expression across tissues", Nature 550, 239-243 (2017), doi:10.1038/nature24267, <URL: https://www.nature.com/articles/nature24267>.
 
 # Testing
 
