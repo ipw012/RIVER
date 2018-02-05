@@ -15,7 +15,7 @@ Get most recent version of R (>= 3.4) from [CRAN](http://cran.r-project.org/).
 
 ```R
 ## try http:// if https:// URLs are not supported
-source("https://bioconductor.org/biocLite.R")
+source("http://bioconductor.org/biocLite.R")
 biocLite("RIVER")
 ```
 # Vignettes
