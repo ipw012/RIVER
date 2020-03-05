@@ -7,8 +7,8 @@ test_that("Basic functions work as expected", {
                                            package = "RIVER"), ZscoreThrd=1.5)
   FeatAll <- t(exprs(dataInput)) # all genomic features
   OutAll <- as.numeric(unlist(dataInput$Outlier))-1 # all outlier status
-  expect_equal(class(FeatAll),"matrix")
-  expect_equal(class(OutAll),"numeric")
+  expect_equal(inherits(FeatAll,"matrix"),TRUE)
+  expect_equal(inherits(OutAll,"numeric"),TRUE)
   expect_equal(length(unique(OutAll)),2) # either outlier or nonoutlier
 
   # training G data
@@ -16,8 +16,8 @@ test_that("Basic functions work as expected", {
   # training E data
   OutTrng <-
     as.numeric(unlist(dataInput$Outlier[is.na(dataInput$N2pair)]))-1
-  expect_equal(class(FeatTrng),"matrix")
-  expect_equal(class(OutTrng),"numeric")
+  expect_equal(inherits(FeatTrng,"matrix"),TRUE)
+  expect_equal(inherits(OutTrng,"numeric"),TRUE)
 
   # Test G data
   FeatTest <-
@@ -39,7 +39,7 @@ test_that("Basic functions work as expected", {
         [seq(from=2,to=sum(!is.na(dataInput$N2pair)),by=2)],
         dataInput$Outlier[!is.na(dataInput$N2pair)]
         [seq(from=1,to=sum(!is.na(dataInput$N2pair)),by=2)])))-1
-  expect_equal(class(FeatTest),"matrix")
+  expect_equal(inherits(FeatTest,"matrix"),TRUE)
   expect_identical(
     rownames(FeatTest),
     c(sampleNames(dataInput[,!is.na(dataInput$N2pair)])
