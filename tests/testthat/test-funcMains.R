@@ -14,7 +14,7 @@ test_that("Two main functions work as expected", {
   expect_equal(length(evaROC$RIVER_sens),length(evaROC$RIVER_spec))
   expect_equal(length(evaROC$GAM_sens),length(evaROC$GAM_spec))
   expect_lte(evaROC$pvalue,1)
-  expect_equal(class(evaROC$RIVER_auc),"numeric")
+  expect_equal(inherits(evaROC$RIVER_auc,"numeric"),TRUE)
 
   ## appRIVER works as expected
   postprobs <- appRIVER(dataInput, pseudoc=50, theta_init, costs)
